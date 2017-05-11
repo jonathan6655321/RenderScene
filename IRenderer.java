@@ -1,5 +1,5 @@
 package RenderScene;
 
-public class IRenderer {
+public interface IRenderer {
 
 }

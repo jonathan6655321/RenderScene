@@ -1,5 +1,5 @@
 package RenderScene;
 
-public class RayTracingRenderer {
+public class RayTracingRenderer implements IRenderer {
 
 }
