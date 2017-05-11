@@ -19,4 +19,9 @@ public class Scene {
 	public void addRenderableObject(RenderableObject renderableObject) {
 		objectsInScene.add(renderableObject);
 	}
+	
+	public Camera getCamera()
+	{
+		return this.camera;
+	}
 }
