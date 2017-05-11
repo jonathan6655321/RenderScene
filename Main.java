@@ -1,15 +1,25 @@
 package RenderScene;
 
 public class Main {
+		
 	public static void main(String[] args) {
-		String pathToSceneDescription = args[0];
-		String pathToResultImage = args[1];
-		int resultImageHeight = Integer.parseInt(args[2]);
-		int resultImageWidth = Integer.parseInt(args[3]);
-		
-		
-		Scene scene = SceneParser.getSceneFromTextFile(pathToSceneDescription);
-		IRenderer renderer = new RayTracingRenderer();
-		renderer.renderScene(scene, pathToResultImage, resultImageWidth, resultImageHeight);
+		try {
+			Request request = new Request(args);
+			Scene scene = SceneParser.getSceneFromTextFile(request.pathToSceneDescription);
+			IRenderer renderer = new RayTracingRenderer();
+			renderer.renderScene(scene, request.pathToResultImage, 
+					request.resultImageWidth, request.resultImageHeight);
+			
+			} catch (IOException e) {
+			System.out.println(e.getMessage());
+			} catch (RayTracerException e) {
+				System.out.println(e.getMessage());
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
 	}
+
+
+
+
 }
