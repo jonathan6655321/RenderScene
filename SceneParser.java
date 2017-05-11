@@ -2,7 +2,7 @@ package RenderScene;
 
 public class SceneParser {
 	
-	public Scene getSceneFromText()
+	public static Scene getSceneFromTextFile(String pathToTextFile)
 	{
 		return null;
 	}
