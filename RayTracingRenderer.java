@@ -28,22 +28,30 @@ public class RayTracingRenderer implements IRenderer {
 				Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
 						resultImageWidth);
 
-				byte[] color = getColorFromRay(scene, firstRay, 0).getColorByteArray();
+				byte[] color = getColorFromRay(scene, firstRay, 0, null).getColorByteArray();
 				System.arraycopy(color, 0, imageRGBData, (row * resultImageWidth + col) * 3, 3);
 			}
 		}
 		return saveImage(resultImageWidth, imageRGBData, pathToResultImage);
 	}
 
-	private Color getColorFromRay(Scene scene, Ray ray, int recursionDepth) {
+	private Color getColorFromRay(Scene scene, Ray ray, int recursionDepth, RenderableObject objectToIgnore) {
 		recursionDepth++;
 		if(recursionDepth>scene.getMaximumNumberOfRecursions()){return null;} //TODO
 		
-		Collision firstCollision = scene.getFirstCollision(ray, null);
+		Collision firstCollision = scene.getFirstCollision(ray, objectToIgnore);
 		if(firstCollision == null){
 			return scene.getBackgroundColor();
 		}
-		Color color = new Color(0,0,0);
+		Color rayColor = new Color(0,0,0);
+		
+		double transparency = firstCollision.getcollisionObject().getMaterial().transperancy;
+		
+		// calulating background color component: 
+		Color backGroundColor = getBackgroundColor(scene, ray, recursionDepth, firstCollision);
+		backGroundColor.multiplyByConstant(transparency);
+		rayColor.add(backGroundColor);
+		
 		
 		//Color += backgroundColor*transperancy (Color)
 		//Color += (diffuse + specular) * (1 - transparency) (Color)
@@ -51,6 +59,12 @@ public class RayTracingRenderer implements IRenderer {
 		
 	}
 
+	private Color getBackgroundColor(Scene scene, Ray ray, int recursionDepth, Collision collision)
+	{
+		Ray rayThroughObject = new Ray(collision.getCollisionPoint(), ray.direction);
+		return getColorFromRay(scene, rayThroughObject, recursionDepth, collision.getcollisionObject());
+	}
+	
 	/*
 	 * Saves RGB data as an image in png format to the specified location.
 	 */
