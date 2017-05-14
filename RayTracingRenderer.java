@@ -40,13 +40,14 @@ public class RayTracingRenderer implements IRenderer {
 			Collision collision = rObj.getCollision(firstRay);
 			if (collision != null) {
 				RenderableObject r = collision.getcollisionObject();
-				if (r instanceof RenderableSphere) {
+				return Color.getColorByteArray(r.getMaterial().diffuseColor);
+				/*if (r instanceof RenderableSphere) {
 					return new byte[] { 127, 0, 0 };
 				}else if (r instanceof RenderableTriangle) {
 					return new byte[] { 127, 0, 0 };
 				}else{
 //					return new byte[] { 0, 127, 0 };
-				}
+				}*/
 			}
 		}
 
