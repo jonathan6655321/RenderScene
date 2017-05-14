@@ -131,7 +131,7 @@ public class SceneParser {
 		x = Double.parseDouble(cameraParams[i++]);
 		y = Double.parseDouble(cameraParams[i++]);
 		z = Double.parseDouble(cameraParams[i++]);
-		Vector3D lookAtDirection = new Vector3D(x, y, z);
+		Vector3D lookAtPoint = new Vector3D(x, y, z);
 
 		x = Double.parseDouble(cameraParams[i++]);
 		y = Double.parseDouble(cameraParams[i++]);
@@ -141,7 +141,7 @@ public class SceneParser {
 		double screenDistance = Double.parseDouble(cameraParams[i++]);
 		double screenWidthRelativeToScene = Double.parseDouble(cameraParams[i++]);
 
-		return new Camera(position, lookAtDirection, upDirection, screenDistance, screenWidthRelativeToScene,
+		return new Camera(position, lookAtPoint, upDirection, screenDistance, screenWidthRelativeToScene,
 				imageHeightInPixels, imageWidthInPixels);
 	}
 

@@ -10,9 +10,6 @@ public class Color {
 	}
 
 	public static byte[] getColorByteArray(Color color) {
-		int redInt = (int) (color.red * 255);
-		int greenInt = (int) (color.green * 255);
-		int blueInt = (int) (color.blue * 255);
-		return new byte[] { (byte) redInt, (byte) greenInt, (byte) blueInt };
+		return new byte[] { (byte) (color.red * 255), (byte) (color.green * 255), (byte) (color.blue * 255) };
 	}
 }

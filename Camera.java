@@ -90,6 +90,11 @@ public class Camera {
 	
 	public Vector3D fixUpDirection(Vector3D lookAtDirection, Vector3D upDirection)
 	{
+		Vector3D firstCrossProd = Vector3D.crossProduct(lookAtDirection, upDirection);
+		Vector3D secondCrossProd = Vector3D.crossProduct(lookAtDirection, firstCrossProd);
+		return secondCrossProd.getVectorMultipliedByConstant(-1);
+		/*
+		
 		//TODO big haltura here..
 		for (int i=0; i < 3; i++)
 		{
@@ -100,6 +105,6 @@ public class Camera {
 				return upDirection;
 			}
 		}
-		return upDirection;
+		return upDirection;*/
 	}
 }
