@@ -32,6 +32,16 @@ public class Color {
 		return;
 	}
 	
+	public void multiplyByColor(Color color)
+	{
+		this.red *= color.red;
+		this.blue *= color.blue;
+		this.green *= color.green;
+		this.boundComponentsToOne();
+		return;
+	}
+	
+	
 	private void boundComponentsToOne()
 	{
 		this.red = Math.min(this.red, 1);

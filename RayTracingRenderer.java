@@ -44,13 +44,18 @@ public class RayTracingRenderer implements IRenderer {
 			return scene.getBackgroundColor();
 		}
 		Color rayColor = new Color(0,0,0);
+		RenderableObject collisionObject = firstCollision.getcollisionObject();
+		double transparency = collisionObject.getMaterial().transperancy;
 		
-		double transparency = firstCollision.getcollisionObject().getMaterial().transperancy;
-		
-		// calulating background color component: 
+		// calculating background color component: 
 		Color backGroundColor = getBackgroundColor(scene, ray, recursionDepth, firstCollision);
 		backGroundColor.multiplyByConstant(transparency);
 		rayColor.add(backGroundColor);
+		
+		// calculating reflective color component:
+		Color reflectiveColor = getReflectiveColor(scene, ray, recursionDepth, firstCollision);
+		reflectiveColor.multiplyByColor(collisionObject.getMaterial().reflectionColor);
+		rayColor.add(reflectiveColor);
 		
 		
 		//Color += backgroundColor*transperancy (Color)
@@ -63,6 +68,13 @@ public class RayTracingRenderer implements IRenderer {
 	{
 		Ray rayThroughObject = new Ray(collision.getCollisionPoint(), ray.direction);
 		return getColorFromRay(scene, rayThroughObject, recursionDepth, collision.getcollisionObject());
+	}
+	
+	private Color getReflectiveColor(Scene scene, Ray ray, int recursionDepth, Collision collision)
+	{
+		Ray reflectionRay = new Ray(collision.getCollisionPoint(), 
+				ray.direction.getReflectionVector(collision.getNormalToCollisionPoint()));
+		return getColorFromRay(scene, reflectionRay, recursionDepth, collision.getcollisionObject());
 	}
 	
 	/*
