@@ -8,4 +8,11 @@ public class Color {
 		this.green = green;
 		this.blue = blue;
 	}
+
+	public static byte[] getColorByteArray(Color color) {
+		int redInt = (int) (color.red * 255);
+		int greenInt = (int) (color.green * 255);
+		int blueInt = (int) (color.blue * 255);
+		return new byte[] { (byte) redInt, (byte) greenInt, (byte) blueInt };
+	}
 }

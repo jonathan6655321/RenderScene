@@ -6,8 +6,8 @@ import sun.invoke.util.VerifyType;
 
 public class RenderableTriangle extends RenderablePlane {
 	Vector3D triangleVertex;
-	Vector3D[] triangleVectors = new Vector3D[3];
-	double[] vectorsMagnitude = new double[3];
+	Vector3D[] triangleVectors = new Vector3D[2];
+	double[] vectorsMagnitude = new double[2];
 
 	public RenderableTriangle(Vector3D[] vertices, Material material) {
 		super(getNormalFromPoints(vertices), vertices[0], material);
@@ -17,7 +17,7 @@ public class RenderableTriangle extends RenderablePlane {
 			this.vectorsMagnitude[i] = this.triangleVectors[i].getMagnitude();
 			this.triangleVectors[i].normalize();
 		}
-		Vector3D avrageOfVertex1Vertex2 = Vector3D.add(vertices[1], vertices[2]).getVectorMultipliedByConstant(0.5);
+		/*Vector3D avrageOfVertex1Vertex2 = Vector3D.add(vertices[1], vertices[2]).getVectorMultipliedByConstant(0.5);
 		Vector3D thirdVector = Vector3D.subtract(vertices[1], vertices[2]);
 
 		Vector3D medianVector = Vector3D.subtract(avrageOfVertex1Vertex2, triangleVertex);
@@ -32,7 +32,7 @@ public class RenderableTriangle extends RenderablePlane {
 
 		this.triangleVectors[2] = perpendicularVector;
 		this.vectorsMagnitude[2] = this.triangleVectors[2].getMagnitude();
-		this.triangleVectors[2].normalize();
+		this.triangleVectors[2].normalize();*/
 	}
 
 	private static Vector3D getNormalFromPoints(Vector3D[] vertices) {

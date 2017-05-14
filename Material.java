@@ -13,5 +13,4 @@ public class Material {
 		this.phongSpecularity = phongSpecularity;
 		this.transperancy = transperancy;
 	}
-
 }
