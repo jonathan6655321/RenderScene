@@ -17,7 +17,7 @@ public class RenderablePlane extends RenderableObject {
 	}
 
 	@Override
-	public Vector3D getCollitionPoint(Ray ray) {
+	public Collision getCollision(Ray ray) {
 		double rayStartPointOffsetFromPlane= Vector3D.dotProduct(ray.startPosition, planeNormal) - planeOffset;
 		
 	}

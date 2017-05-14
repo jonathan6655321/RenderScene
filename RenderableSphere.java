@@ -16,7 +16,7 @@ public class RenderableSphere extends RenderableObject{
 	}
 
 	@Override
-	public Vector3D getCollisionPoint(Ray ray) {
+	public Collision getCollision(Ray ray) {
 		// TODO Auto-generated method stub
 		return null;
 	}
