@@ -15,4 +15,10 @@ public class RenderableSphere extends RenderableObject{
 		return new Vector3D(sphereCenterPosition, point);
 	}
 
+	@Override
+	public Vector3D getCollitionPoint(Ray ray) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

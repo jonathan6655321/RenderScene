@@ -6,13 +6,20 @@ public class RenderablePlane extends RenderableObject {
 
 	public RenderablePlane(Vector3D planeNormal, double planeOffset, Material material) {
 		super(material);
+		this.planeOffset = planeOffset * planeNormal.getMagnitude();
 		this.planeNormal = planeNormal;
-		this.planeOffset = planeOffset;
+		this.planeNormal.normalize();
 	}
 
 	@Override
 	public Vector3D getNormalAtPoint(Vector3D point) {
 		return planeNormal;
+	}
+
+	@Override
+	public Vector3D getCollitionPoint(Ray ray) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
