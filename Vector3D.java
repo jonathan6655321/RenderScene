@@ -107,6 +107,9 @@ public class Vector3D {
 		return this.getNormalizedVector().getVectorMultipliedByConstant(mag);
 	}
 	
+	public static double getPointsDistance(Vector3D point1, Vector3D point2){
+		Vector3D distance
+	}
 	
 	
 }

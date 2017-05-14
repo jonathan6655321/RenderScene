@@ -9,7 +9,7 @@ public class Color {
 		this.blue = blue;
 	}
 
-	public static byte[] getColorByteArray(Color color) {
-		return new byte[] { (byte) (color.red * 255), (byte) (color.green * 255), (byte) (color.blue * 255) };
+	public byte[] getColorByteArray() {
+		return new byte[] { (byte) (red * 255), (byte) (green * 255), (byte) (blue * 255) };
 	}
 }

@@ -43,7 +43,7 @@ public class Scene {
 		return superSampling;
 	}
 
-	public int getMaximumNumberOfRecurtsions() {
+	public int getMaximumNumberOfRecursions() {
 		return maximumNumberOfRecurtsions;
 	}
 
@@ -53,6 +53,18 @@ public class Scene {
 
 	public Color getBackgroundColor() {
 		return backgroundColor;
+	}
+	
+	public Collision getFirstCollision(Ray ray, RenderableObject objectToIgnore){
+		Collision minCollision = null;
+		for (RenderableObject rObj : getObjectsInScene()) {			
+			Collision collision = rObj.getCollision(ray);
+			if (collision != null) {
+				if(minCollision==null){
+					minCollision = collision;
+				}else if()
+			}
+				
 	}
 	
 }

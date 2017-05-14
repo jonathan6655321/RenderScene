@@ -28,30 +28,27 @@ public class RayTracingRenderer implements IRenderer {
 				Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
 						resultImageWidth);
 
-				byte[] color = getColorFromRay(scene, firstRay);
+				byte[] color = getColorFromRay(scene, firstRay, 0).getColorByteArray();
 				System.arraycopy(color, 0, imageRGBData, (row * resultImageWidth + col) * 3, 3);
 			}
 		}
 		return saveImage(resultImageWidth, imageRGBData, pathToResultImage);
 	}
 
-	private byte[] getColorFromRay(Scene scene, Ray firstRay) {
-		for (RenderableObject rObj : scene.getObjectsInScene()) {			
-			Collision collision = rObj.getCollision(firstRay);
-			if (collision != null) {
-				RenderableObject r = collision.getcollisionObject();
-				return Color.getColorByteArray(r.getMaterial().diffuseColor);
-				/*if (r instanceof RenderableSphere) {
-					return new byte[] { 127, 0, 0 };
-				}else if (r instanceof RenderableTriangle) {
-					return new byte[] { 127, 0, 0 };
-				}else{
-//					return new byte[] { 0, 127, 0 };
-				}*/
-			}
+	private Color getColorFromRay(Scene scene, Ray ray, int recursionDepth) {
+		recursionDepth++;
+		if(recursionDepth>scene.getMaximumNumberOfRecursions()){return null;} //TODO
+		
+		Collision firstCollision = scene.getFirstCollision(ray, null);
+		if(firstCollision == null){
+			return scene.getBackgroundColor();
 		}
-
-		return new byte[] { 0, 0, 0 };
+		Color color = new Color(0,0,0);
+		
+		//Color += backgroundColor*transperancy (Color)
+		//Color += (diffuse + specular) * (1 - transparency) (Color)
+		//Color += (reflection color) * reflection (Color)
+		
 	}
 
 	/*
