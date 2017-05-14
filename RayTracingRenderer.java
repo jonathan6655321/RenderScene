@@ -36,7 +36,7 @@ public class RayTracingRenderer implements IRenderer {
 	}
 
 	private Color getColorFromRay(Scene scene, Ray ray, int recursionDepth, RenderableObject objectToIgnore) {
-		recursionDepth++;
+		recursionDepth++; // TODO if move this, change getBackgroundColor and getReflectiveColor accordingly
 		if(recursionDepth>scene.getMaximumNumberOfRecursions()){return null;} //TODO
 		
 		Collision firstCollision = scene.getFirstCollision(ray, objectToIgnore);
