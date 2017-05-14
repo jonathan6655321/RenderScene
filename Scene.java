@@ -30,8 +30,8 @@ public class Scene {
 	public void addRenderableObject(RenderableObject renderableObject) {
 		objectsInScene.add(renderableObject);
 	}
-	
-	public ArrayList<RenderableObject> getObjectsInScene(){
+
+	public ArrayList<RenderableObject> getObjectsInScene() {
 		return objectsInScene;
 	}
 
@@ -54,17 +54,24 @@ public class Scene {
 	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
-	
-	public Collision getFirstCollision(Ray ray, RenderableObject objectToIgnore){
+
+	public Collision getFirstCollision(Ray ray, RenderableObject objectToIgnore) {
 		Collision minCollision = null;
-		for (RenderableObject rObj : getObjectsInScene()) {			
-			Collision collision = rObj.getCollision(ray);
-			if (collision != null) {
-				if(minCollision==null){
-					minCollision = collision;
-				}else if()
+		double minCollisionDistance = Double.POSITIVE_INFINITY;
+		for (RenderableObject rObj : getObjectsInScene()) {
+			if (objectToIgnore != rObj) {
+				Collision collision = rObj.getCollision(ray);
+				if (collision != null) {
+					double collitionDistance = Vector3D.getPointsDistance(collision.getCollisionPoint(),
+							ray.startPosition);
+					if (collitionDistance < minCollisionDistance) {
+						minCollisionDistance = collitionDistance;
+						minCollision = collision;
+					}
+				}
 			}
-				
+		}
+		return minCollision;
 	}
-	
+
 }

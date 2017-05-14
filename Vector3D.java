@@ -108,7 +108,7 @@ public class Vector3D {
 	}
 	
 	public static double getPointsDistance(Vector3D point1, Vector3D point2){
-		Vector3D distance
+		return Math.abs(Vector3D.subtract(point1, point2).getMagnitude());
 	}
 	
 	
