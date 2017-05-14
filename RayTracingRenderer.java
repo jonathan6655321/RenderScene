@@ -40,6 +40,10 @@ public class RayTracingRenderer implements IRenderer {
 	}
 
 	private byte[] getColorFromRay(Scene scene, Ray firstRay) {
+		
+		
+		
+		
 		return null;
 	}
 
