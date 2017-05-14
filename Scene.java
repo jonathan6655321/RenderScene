@@ -30,6 +30,10 @@ public class Scene {
 	public void addRenderableObject(RenderableObject renderableObject) {
 		objectsInScene.add(renderableObject);
 	}
+	
+	public ArrayList<RenderableObject> getObjectsInScene(){
+		return objectsInScene;
+	}
 
 	public Camera getCamera() {
 		return this.camera;
@@ -50,4 +54,5 @@ public class Scene {
 	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
+	
 }

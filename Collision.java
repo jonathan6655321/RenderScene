@@ -18,4 +18,12 @@ public class Collision {
 		}
 		return normalToCollisionPoint;
 	}
+	
+	public Vector3D getCollisionPoint(){
+		return collisionPoint;
+	}
+	
+	public RenderableObject getcollisionObject(){
+		return collisionObject;
+	}
 }

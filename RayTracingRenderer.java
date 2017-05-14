@@ -18,42 +18,37 @@ import javax.imageio.ImageIO;
 
 public class RayTracingRenderer implements IRenderer {
 
-	
-	
-	
 	public boolean renderScene(Scene scene, String pathToResultImage, int resultImageWidth, int resultImageHeight) {
 
 		byte[] imageRGBData = new byte[resultImageWidth * resultImageHeight * 3];
-		
-		for (int row=0; row < resultImageHeight; row++ )
-		{
-			for (int col=0; col < resultImageWidth; col++ )
-			{
+
+		for (int row = 0; row < resultImageHeight; row++) {
+			for (int col = 0; col < resultImageWidth; col++) {
 				// TODO super sampling
-				Ray firstRay = 
-						scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight, resultImageWidth);
-				
-				byte[] color = getColorFromRay(scene , firstRay);
-				System.arraycopy(color, 0, imageRGBData, (row*resultImageWidth + col)*3, 3);
+				Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
+						resultImageWidth);
+
+				byte[] color = getColorFromRay(scene, firstRay);
+				System.arraycopy(color, 0, imageRGBData, (row * resultImageWidth + col) * 3, 3);
 			}
 		}
 		return saveImage(resultImageWidth, imageRGBData, pathToResultImage);
 	}
 
 	private byte[] getColorFromRay(Scene scene, Ray firstRay) {
-		
-		
-		
-		
-		return null;
+		for (RenderableObject rObj : scene.getObjectsInScene()) {
+			if (rObj.getCollision(firstRay) != null) {
+				return new byte[] { 127, 127, 127 };
+			}
+		}
+
+		return new byte[] { 0, 0, 0 };
 	}
 
-	
 	/*
 	 * Saves RGB data as an image in png format to the specified location.
 	 */
-	private static boolean saveImage(int width, byte[] rgbData, String fileName)
-	{
+	private static boolean saveImage(int width, byte[] rgbData, String fileName) {
 		try {
 
 			BufferedImage image = bytes2RGB(width, rgbData);
@@ -68,18 +63,18 @@ public class RayTracingRenderer implements IRenderer {
 	}
 
 	/*
-	 * Producing a BufferedImage that can be saved as png from a byte array of RGB values.
+	 * Producing a BufferedImage that can be saved as png from a byte array of
+	 * RGB values.
 	 */
 	private static BufferedImage bytes2RGB(int width, byte[] buffer) {
-	    int height = buffer.length / width / 3;
-	    ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-	    ColorModel cm = new ComponentColorModel(cs, false, false,
-	            Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-	    SampleModel sm = cm.createCompatibleSampleModel(width, height);
-	    DataBufferByte db = new DataBufferByte(buffer, width * height);
-	    WritableRaster raster = Raster.createWritableRaster(sm, db, null);
-	    BufferedImage result = new BufferedImage(cm, raster, false, null);
+		int height = buffer.length / width / 3;
+		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+		ColorModel cm = new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+		SampleModel sm = cm.createCompatibleSampleModel(width, height);
+		DataBufferByte db = new DataBufferByte(buffer, width * height);
+		WritableRaster raster = Raster.createWritableRaster(sm, db, null);
+		BufferedImage result = new BufferedImage(cm, raster, false, null);
 
-	    return result;
+		return result;
 	}
 }

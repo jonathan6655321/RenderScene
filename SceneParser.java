@@ -184,7 +184,28 @@ public class SceneParser {
 
 	private static RenderableTriangle generateRenderableTriangle(String[] objectParams,
 			ArrayList<Material> MaterialsArray) {
+		int i = 0;
 
+		double x, y, z;
+		x = Double.parseDouble(objectParams[i++]);
+		y = Double.parseDouble(objectParams[i++]);
+		z = Double.parseDouble(objectParams[i++]);
+		Vector3D vertex1 = new Vector3D(x, y, z);
+
+		x = Double.parseDouble(objectParams[i++]);
+		y = Double.parseDouble(objectParams[i++]);
+		z = Double.parseDouble(objectParams[i++]);
+		Vector3D vertex2 = new Vector3D(x, y, z);
+
+		x = Double.parseDouble(objectParams[i++]);
+		y = Double.parseDouble(objectParams[i++]);
+		z = Double.parseDouble(objectParams[i++]);
+		Vector3D vertex3 = new Vector3D(x, y, z);
+
+		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]));
+
+		Vector3D[] vertices = new Vector3D[] { vertex1, vertex2, vertex3 };
+		return new RenderableTriangle(vertices, material);
 	}
 
 	private static RenderablePlane generateRenderablePlane(String[] objectParams, ArrayList<Material> MaterialsArray) {
