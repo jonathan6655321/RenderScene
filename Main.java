@@ -13,10 +13,13 @@ public class Main {
 					request.resultImageWidth, request.resultImageHeight);
 			
 			} catch (IOException e) {
-			System.out.println(e.getMessage());
+				e.printStackTrace();
+				System.out.println(e.getMessage());
 			} catch (RayTracerException e) {
 				System.out.println(e.getMessage());
+				e.printStackTrace();
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.println(e.getMessage());
 			}
 	}

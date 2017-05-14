@@ -38,9 +38,9 @@ public class Vector3D {
 	
 	public static Vector3D crossProduct(Vector3D vector1, Vector3D vector2)
 	{
-		double newX = vector1.vector[2]*vector2.vector[3] - vector1.vector[3]*vector2.vector[2];
-		double newY = vector1.vector[3]*vector2.vector[1] - vector1.vector[1]*vector2.vector[3];
-		double newZ = vector1.vector[1]*vector2.vector[2] - vector1.vector[2]*vector2.vector[1];
+		double newX = vector1.vector[1]*vector2.vector[2] - vector1.vector[2]*vector2.vector[1];
+		double newY = vector1.vector[2]*vector2.vector[0] - vector1.vector[0]*vector2.vector[2];
+		double newZ = vector1.vector[0]*vector2.vector[1] - vector1.vector[1]*vector2.vector[0];
 		
 		return new Vector3D(newX, newY, newZ);
 		

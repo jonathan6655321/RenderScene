@@ -105,11 +105,11 @@ public class SceneParser {
 	}
 
 	private static Scene generateSceneWithSetData(String[] setParams) {
-		byte red, green, blue;
+		double red, green, blue;
 		int i = 0;
-		red = Byte.parseByte(setParams[i++]);
-		green = Byte.parseByte(setParams[i++]);
-		blue = Byte.parseByte(setParams[i++]);
+		red = Double.parseDouble(setParams[i++]);
+		green = Double.parseDouble(setParams[i++]);
+		blue = Double.parseDouble(setParams[i++]);
 		Color backgroundColor = new Color(red, green, blue);
 
 		int rootNumberOfShadowRay = Integer.parseInt(setParams[i++]);
@@ -148,20 +148,20 @@ public class SceneParser {
 	private static Material generateMaterial(String[] materialParams) {
 		int i = 0;
 
-		byte red, green, blue;
-		red = Byte.parseByte(materialParams[i++]);
-		green = Byte.parseByte(materialParams[i++]);
-		blue = Byte.parseByte(materialParams[i++]);
+		double red, green, blue;
+		red = Double.parseDouble(materialParams[i++]);
+		green = Double.parseDouble(materialParams[i++]);
+		blue = Double.parseDouble(materialParams[i++]);
 		Color diffuseColor = new Color(red, green, blue);
 
-		red = Byte.parseByte(materialParams[i++]);
-		green = Byte.parseByte(materialParams[i++]);
-		blue = Byte.parseByte(materialParams[i++]);
+		red = Double.parseDouble(materialParams[i++]);
+		green = Double.parseDouble(materialParams[i++]);
+		blue = Double.parseDouble(materialParams[i++]);
 		Color specularColor = new Color(red, green, blue);
 
-		red = Byte.parseByte(materialParams[i++]);
-		green = Byte.parseByte(materialParams[i++]);
-		blue = Byte.parseByte(materialParams[i++]);
+		red = Double.parseDouble(materialParams[i++]);
+		green = Double.parseDouble(materialParams[i++]);
+		blue = Double.parseDouble(materialParams[i++]);
 		Color reflectionColor = new Color(red, green, blue);
 
 		int phongSpecularity = Integer.parseInt(materialParams[i++]);
@@ -202,7 +202,7 @@ public class SceneParser {
 		z = Double.parseDouble(objectParams[i++]);
 		Vector3D vertex3 = new Vector3D(x, y, z);
 
-		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]));
+		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]) - 1);
 
 		Vector3D[] vertices = new Vector3D[] { vertex1, vertex2, vertex3 };
 		return new RenderableTriangle(vertices, material);
@@ -218,7 +218,7 @@ public class SceneParser {
 		Vector3D planeNormal = new Vector3D(x, y, z);
 
 		double planeOffset = Double.parseDouble(objectParams[i++]);
-		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]));
+		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]) - 1);
 
 		return new RenderablePlane(planeNormal, planeOffset, material);
 	}
@@ -234,13 +234,13 @@ public class SceneParser {
 		Vector3D sphereCenterPosition = new Vector3D(x, y, z);
 
 		double sphereRadius = Double.parseDouble(objectParams[i++]);
-		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]));
+		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]) - 1);
 
 		return new RenderableSphere(sphereCenterPosition, sphereRadius, material);
 	}
 
 	private static LightSource generateLightSource(String[] lightSourceParams) {
-		int i = 0;
+		/*int i = 0;
 
 		double x, y, z;
 		x = Double.parseDouble(lightSourceParams[i++]);
@@ -248,17 +248,18 @@ public class SceneParser {
 		z = Double.parseDouble(lightSourceParams[i++]);
 		Vector3D position = new Vector3D(x, y, z);
 
-		byte red, green, blue;
-		red = Byte.parseByte(lightSourceParams[i++]);
-		green = Byte.parseByte(lightSourceParams[i++]);
-		blue = Byte.parseByte(lightSourceParams[i++]);
+		double red, green, blue;
+		red = Double.parseDouble(lightSourceParams[i++]);
+		green = Double.parseDouble(lightSourceParams[i++]);
+		blue = Double.parseDouble(lightSourceParams[i++]);
 		Color lightColor = new Color(red, green, blue);
 
 		double specularIntensity = Double.parseDouble(lightSourceParams[i++]);
 		double shadowIntensity = Double.parseDouble(lightSourceParams[i++]);
 		double lightWidth = Double.parseDouble(lightSourceParams[i++]);
 
-		return new LightSource(position, lightColor, specularIntensity, shadowIntensity, lightWidth);
+		return new LightSource(position, lightColor, specularIntensity, shadowIntensity, lightWidth);*/ //TODO
+		return null;
 	}
 
 	private static class ParserableScene {
