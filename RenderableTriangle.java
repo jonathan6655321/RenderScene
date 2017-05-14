@@ -2,17 +2,22 @@ package RenderScene;
 
 public class RenderableTriangle extends RenderablePlane {
 	Vector3D triangleVertex;
-	Vector3D[] trianglesectors = new Vector3D[2];
-	double[] vectorsMagnitude = new double[2];
+	Vector3D[] triangleVectors = new Vector3D[3];
+	double[] vectorsMagnitude = new double[3];
 
 	public RenderableTriangle(Vector3D[] vertices, Material material) {
 		super(getNormalFromPoints(vertices), vertices[0], material);
 		this.triangleVertex = vertices[0];
 		for (int i = 0; i < 2; i++) {
-			this.trianglesectors[i] = Vector3D.subtract(vertices[i + 1], vertices[0]);
-			this.vectorsMagnitude[i] = this.trianglesectors[i].getMagnitude();
-			this.trianglesectors[i].normalize();
+			this.triangleVectors[i] = Vector3D.subtract(vertices[i + 1], triangleVertex);
+			this.vectorsMagnitude[i] = this.triangleVectors[i].getMagnitude();
+			this.triangleVectors[i].normalize();
 		}
+		Vector3D avrageOfVertex1Vertex2 = Vector3D.add(vertices[1], vertices[2]).getVectorMultipliedByConstant(0.5);
+		this.triangleVectors[2] =Vector3D.subtract(avrageOfVertex1Vertex2, triangleVertex);
+		
+		this.vectorsMagnitude[2] = this.triangleVectors[2].getMagnitude();
+		this.triangleVectors[2].normalize();
 	}
 
 	private static Vector3D getNormalFromPoints(Vector3D[] vertices) {
@@ -29,12 +34,13 @@ public class RenderableTriangle extends RenderablePlane {
 			return null;
 		}
 		Vector3D vectorToColitionFromVertex = Vector3D.subtract(collision.getCollisionPoint(), triangleVertex);
-		for (int i = 0; i < 2; i++) {
-			double componentInCollisionVector = Vector3D.dotProduct(vectorToColitionFromVertex, trianglesectors[0]);
+		for (int i = 0; i < 3; i++) {
+			double componentInCollisionVector = Vector3D.dotProduct(vectorToColitionFromVertex, triangleVectors[i]);
 			if (componentInCollisionVector < 0 || componentInCollisionVector > vectorsMagnitude[i]) {
 				return null;
 			}
 		}
 		return collision;
 	}
+
 }
