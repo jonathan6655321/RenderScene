@@ -41,11 +41,11 @@ public class RayTracingRenderer implements IRenderer {
 			if (collision != null) {
 				RenderableObject r = collision.getcollisionObject();
 				if (r instanceof RenderableSphere) {
-					//return new byte[] { 127, 0, 0 };
+					return new byte[] { 127, 0, 0 };
 				}else if (r instanceof RenderableTriangle) {
 					return new byte[] { 127, 0, 0 };
 				}else{
-					return new byte[] { 127, 0, 0 };
+//					return new byte[] { 0, 127, 0 };
 				}
 			}
 		}

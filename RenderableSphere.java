@@ -20,7 +20,7 @@ public class RenderableSphere extends RenderableObject{
 	 */
 	public Collision getCollision(Ray ray) {
 		ray.direction.normalize();
-		
+			
 		// see link to understand notation
 		Vector3D oMinusC = Vector3D.subtract(ray.startPosition, this.sphereCenterPosition);
 		double iDotOMinusC = Vector3D.dotProduct(ray.direction,oMinusC);

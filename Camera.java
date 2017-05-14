@@ -17,10 +17,10 @@ public class Camera {
 	private Vector3D onePixelDownVector;
 	
 	
-	public Camera(Vector3D cameraPosition, Vector3D lookAtDirection, Vector3D upDirection,
+	public Camera(Vector3D cameraPosition, Vector3D lookAtPoint, Vector3D upDirection,
 			double screenDistance, double screenWidthRelativeToScene, int imageHeightInPixels, int imageWidthInPixels) {
 		this.cameraPosition = cameraPosition;
-		this.lookAtDirection = lookAtDirection;
+		this.lookAtDirection = Vector3D.subtract(lookAtPoint, cameraPosition);
 		this.upDirection = upDirection;
 		this.screenDistance = screenDistance;
 		this.screenWidthRelativeToScene = screenWidthRelativeToScene;
