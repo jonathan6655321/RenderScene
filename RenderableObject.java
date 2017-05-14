@@ -1,5 +1,5 @@
 package RenderScene;
 
-public class RenderableObject {
-
+public abstract class RenderableObject {
+	public Vector3D getNormalAtPoint(Vector3D point);
 }
