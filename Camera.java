@@ -21,15 +21,13 @@ public class Camera {
 			double screenDistance, double screenWidthRelativeToScene, int imageHeightInPixels, int imageWidthInPixels) {
 		this.cameraPosition = cameraPosition;
 		this.lookAtDirection = Vector3D.subtract(lookAtPoint, cameraPosition);
-		this.upDirection = upDirection;
+		this.upDirection = fixUpDirection(lookAtDirection, upDirection);
 		this.screenDistance = screenDistance;
 		this.screenWidthRelativeToScene = screenWidthRelativeToScene;
 		
 		initScreenParams(imageHeightInPixels, imageWidthInPixels);
 	}
 
-	// TODO is upDirection perpendicular to LookAtDirection
-	// TODO init this somewhere
 	public void initScreenParams(int imageHeightInPixels, int imageWidthInPixels)
 	{
 		initScreenCenterPosition();
@@ -88,5 +86,20 @@ public class Camera {
 		Vector3D diffToPixelAtRowColFromTopLeftPixel = Vector3D.add(diffToRight, diffDown);
 		
 		return Vector3D.add(diffToPixelAtRowColFromTopLeftPixel, topLeftPixelPosition);
+	}
+	
+	public Vector3D fixUpDirection(Vector3D lookAtDirection, Vector3D upDirection)
+	{
+		//TODO big haltura here..
+		for (int i=0; i < 3; i++)
+		{
+			if(lookAtDirection.vector[i] != 0)
+			{
+				upDirection.vector[i] = -(lookAtDirection.vector[(i+1)%3]*upDirection.vector[(i+1)%3] + 
+						lookAtDirection.vector[(i+2)%3]*upDirection.vector[(i+2)%3])/lookAtDirection.vector[i];
+				return upDirection;
+			}
+		}
+		return upDirection;
 	}
 }
