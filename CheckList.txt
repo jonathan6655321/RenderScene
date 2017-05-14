@@ -1,0 +1,5 @@
+-parser
+-collition obj
+-first ray collition in scene
+-return black if collition or white if no collition
+-scene to test on
