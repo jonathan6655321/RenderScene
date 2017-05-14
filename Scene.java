@@ -8,14 +8,14 @@ public class Scene {
 	private ArrayList<LightSource> lightSourcesInScene = new ArrayList<>();
 	private Camera camera;
 	private Color backgroundColor;
-	int rootNumberOfShadowRay;
-	int maximumNumberOfRecurtsions;
-	int superSampling;
+	private int rootNumberOfShadowRay;
+	private int maximumNumberOfRecurtsions;
+	private int superSampling;
 
 	public Scene(Color backgroundColor, int rootNumberOfShadowRay, int maximumNumberOfRecurtsions, int superSampling) {
 		this.backgroundColor = backgroundColor;
 		this.rootNumberOfShadowRay = rootNumberOfShadowRay;
-		this.maximumNumberOfRecurtsions = superSampling;
+		this.maximumNumberOfRecurtsions = maximumNumberOfRecurtsions;
 		this.superSampling = superSampling;
 	}
 
@@ -33,5 +33,21 @@ public class Scene {
 
 	public Camera getCamera() {
 		return this.camera;
+	}
+
+	public int getSuperSampling() {
+		return superSampling;
+	}
+
+	public int getMaximumNumberOfRecurtsions() {
+		return maximumNumberOfRecurtsions;
+	}
+
+	public int getRootNumberOfShadowRay() {
+		return rootNumberOfShadowRay;
+	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
 	}
 }
