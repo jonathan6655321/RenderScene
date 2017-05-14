@@ -46,6 +46,26 @@ public class Vector3D {
 		
 	}
 	
+	public static double dotProduct(Vector3D vector1, Vector3D vector2 ){
+		double dotProductResult = 0;
+		for(int i = 0; i<3; i++){
+			dotProductResult += vector1.vector[i] * vector2.vector[i];
+		}
+		return dotProductResult;
+	}
+	
+	public static Vector3D max(Vector3D vector1, Vector3D vector2)
+	{
+		if (vector1.getMagnitude() >= vector2.getMagnitude())
+		{
+			return vector1;
+		}
+		else 
+		{
+			return vector2;
+		}
+	}
+	
 	public double getMagnitude()
 	{
 		return Math.sqrt(Math.pow((this.vector[0]),2) + 
@@ -87,11 +107,6 @@ public class Vector3D {
 		return this.getNormalizedVector().getVectorMultipliedByConstant(mag);
 	}
 	
-	public static double dotProduct(Vector3D vector1, Vector3D vector2 ){
-		double dotProductResult = 0;
-		for(int i = 0; i<3; i++){
-			dotProductResult += vector1.vector[i] * vector2.vector[i];
-		}
-		return dotProductResult;
-	}
+	
+	
 }
