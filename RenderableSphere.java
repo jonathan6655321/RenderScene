@@ -11,7 +11,9 @@ public class RenderableSphere extends RenderableObject{
 	}
 
 	public Vector3D getNormalAtPoint(Vector3D point) {
-		return new Vector3D(sphereCenterPosition, point);
+		Vector3D normal = new Vector3D(sphereCenterPosition, point);
+		normal.normalize();
+		return normal;
 	}
 
 	/*

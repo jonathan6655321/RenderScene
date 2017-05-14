@@ -33,7 +33,7 @@ public class SceneParser {
 			scene.addRenderableObject(generateRenderableObject(renderableObjectParserData, MaterialsArray));
 		}
 
-		for (ParserableObject parserData : parserableScene.renderableObjectParserArray) {
+		for (ParserableObject parserData : parserableScene.lightSourceParserArray) {
 			scene.addLightSource(generateLightSource(parserData.objectParams));
 		}
 
@@ -240,7 +240,7 @@ public class SceneParser {
 	}
 
 	private static LightSource generateLightSource(String[] lightSourceParams) {
-		/*int i = 0;
+		int i = 0;
 
 		double x, y, z;
 		x = Double.parseDouble(lightSourceParams[i++]);
@@ -258,8 +258,7 @@ public class SceneParser {
 		double shadowIntensity = Double.parseDouble(lightSourceParams[i++]);
 		double lightWidth = Double.parseDouble(lightSourceParams[i++]);
 
-		return new LightSource(position, lightColor, specularIntensity, shadowIntensity, lightWidth);*/ //TODO
-		return null;
+		return new LightSource(position, lightColor, specularIntensity, shadowIntensity, lightWidth);
 	}
 
 	private static class ParserableScene {

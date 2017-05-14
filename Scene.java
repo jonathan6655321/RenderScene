@@ -27,6 +27,10 @@ public class Scene {
 		lightSourcesInScene.add(lightSource);
 	}
 
+	public ArrayList<LightSource> getLightSources() {
+		return lightSourcesInScene;
+	}
+
 	public void addRenderableObject(RenderableObject renderableObject) {
 		objectsInScene.add(renderableObject);
 	}
