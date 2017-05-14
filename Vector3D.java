@@ -36,6 +36,16 @@ public class Vector3D {
 		return diffVector;
 	}
 	
+	public static Vector3D crossProduct(Vector3D vector1, Vector3D vector2)
+	{
+		double newX = vector1.vector[2]*vector2.vector[3] - vector1.vector[3]*vector2.vector[2];
+		double newY = vector1.vector[3]*vector2.vector[1] - vector1.vector[1]*vector2.vector[3];
+		double newZ = vector1.vector[1]*vector2.vector[2] - vector1.vector[2]*vector2.vector[1];
+		
+		return new Vector3D(newX, newY, newZ);
+		
+	}
+	
 	public double getMagnitude()
 	{
 		return Math.sqrt(Math.pow((this.vector[0]),2) + 
@@ -64,7 +74,18 @@ public class Vector3D {
 	// changes the vector!!
 	public void normalize()
 	{
-		this.multiplyByConstant(this.getMagnitude());
+		this.multiplyByConstant(1/this.getMagnitude());
 	}
+	
+	public Vector3D getNormalizedVector()
+	{
+		return this.getVectorMultipliedByConstant(1/this.getMagnitude());
+	}
+	
+	public Vector3D getVectorInSameDirectionWithMagnitude(double mag)
+	{
+		return this.getNormalizedVector().getVectorMultipliedByConstant(mag);
+	}
+	
 	
 }

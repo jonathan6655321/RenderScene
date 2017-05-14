@@ -30,7 +30,7 @@ public class RayTracingRenderer implements IRenderer {
 			for (int col=0; col < resultImageWidth; col++ )
 			{
 				Ray firstRay = 
-						scene.getCamera().getRayWhichLeavesFromPixel(col, row, resultImageHeight, resultImageWidth);
+						scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight, resultImageWidth);
 				
 				byte[] color = getColorFromRay(scene , firstRay);
 				System.arraycopy(color, 0, imageRGBData, (row*resultImageWidth + col)*3, 3);
