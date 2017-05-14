@@ -29,6 +29,7 @@ public class RayTracingRenderer implements IRenderer {
 		{
 			for (int col=0; col < resultImageWidth; col++ )
 			{
+				// TODO super sampling
 				Ray firstRay = 
 						scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight, resultImageWidth);
 				

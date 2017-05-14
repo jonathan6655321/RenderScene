@@ -18,44 +18,46 @@ public class Camera {
 	
 	
 	public Camera(Vector3D cameraPosition, Vector3D lookAtDirection, Vector3D upDirection,
-			double screenDistance, double screenWidthRelativeToScene) {
+			double screenDistance, double screenWidthRelativeToScene, int imageHeightInPixels, int imageWidthInPixels) {
 		this.cameraPosition = cameraPosition;
 		this.lookAtDirection = lookAtDirection;
 		this.upDirection = upDirection;
 		this.screenDistance = screenDistance;
 		this.screenWidthRelativeToScene = screenWidthRelativeToScene;
-		this.cameraPosition = cameraPosition;
-		this.cameraPosition = cameraPosition;
-		this.cameraPosition = cameraPosition;
-		this.cameraPosition = cameraPosition;
+		
+		initScreenParams(imageHeightInPixels, imageWidthInPixels);
 	}
 
 	// TODO is upDirection perpendicular to LookAtDirection
-	public void setScreenParams(int imageHeight, int imageWidth)
+	// TODO init this somewhere
+	public void initScreenParams(int imageHeightInPixels, int imageWidthInPixels)
 	{
 		initScreenCenterPosition();
-		pixelWidth = screenWidthRelativeToScene / imageWidth;
+		initPixelWidth(imageWidthInPixels);
 		initOnePixelDownDiff();
 		initOnePixelRightDiff();
-		initTopLeftPixelPosition(imageHeight, imageWidth);
+		initTopLeftPixelPosition(imageHeightInPixels, imageWidthInPixels);
 	}
 	
-	// iamge height, width is number of pixels 
+	// TODO image height, width is number of pixels 
 	public Ray getRayWhichLeavesFromPixel(int row, int col, int imageHeight, int imageWidth)
 	{
-		Ray ray = new Ray();
 		Vector3D pixelAtRowColPosition = getPositionOfPixelAtRowCol(row, col);
-		ray.direction = Vector3D.subtract(pixelAtRowColPosition, cameraPosition);
-		ray.startPosition = pixelAtRowColPosition;
-		return ray;
+		Vector3D rayStartPosition = pixelAtRowColPosition;
+		Vector3D rayDirection = Vector3D.subtract(pixelAtRowColPosition, cameraPosition);
+		return new Ray(rayStartPosition, rayDirection);
 	}
 	
 	
 	// Related to screen params init
 	private void initScreenCenterPosition()
 	{
-		lookAtDirection.normalize();
-		screenCenterPosition = Vector3D.add(cameraPosition, lookAtDirection.getVectorMultipliedByConstant(screenDistance));
+		screenCenterPosition = Vector3D.add(cameraPosition, lookAtDirection.getVectorInSameDirectionWithMagnitude(screenDistance));
+	}
+	
+	private void initPixelWidth(int imageWidthInPixels)
+	{
+		pixelWidth = screenWidthRelativeToScene / imageWidthInPixels;
 	}
 	
 	private void initOnePixelDownDiff()
@@ -66,15 +68,14 @@ public class Camera {
 	
 	private void initOnePixelRightDiff()
 	{
-		Vector3D rightDirection = Vector3D.crossProduct(lookAtDirection.getReversedVector(), upDirection);
+		Vector3D rightDirection = Vector3D.crossProduct(lookAtDirection.getReversedVector(), upDirection);// right hand rule
 		onePixelRightDiff = rightDirection.getVectorInSameDirectionWithMagnitude(pixelWidth);
 	}
 	
 	private void initTopLeftPixelPosition(int imageHeight, int imageWidth)
 	{
-		// TODO ceil?? 
-		Vector3D diffFromCenterToTop = onePixelDownVector.getReversedVector().getVectorMultipliedByConstant(Math.ceil(imageHeight/2));
-		Vector3D diffFromCenterToLeft = onePixelRightDiff.getReversedVector().getVectorMultipliedByConstant(Math.ceil(imageWidth/2));
+		Vector3D diffFromCenterToTop = onePixelDownVector.getReversedVector().getVectorMultipliedByConstant(((double)imageHeight)/2);
+		Vector3D diffFromCenterToLeft = onePixelRightDiff.getReversedVector().getVectorMultipliedByConstant(((double)imageWidth)/2);
 		Vector3D diffFromCenterToTopLeftPixel = Vector3D.add(diffFromCenterToTop, diffFromCenterToLeft);
 		
 		topLeftPixelPosition = Vector3D.add(diffFromCenterToTopLeftPixel, screenCenterPosition);

@@ -15,13 +15,14 @@ public class SceneParser {
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	public static Scene getSceneFromTextFile(String pathToTextFile) throws IOException, RayTracerException {
+	public static Scene getSceneFromTextFile(Request request) throws IOException, RayTracerException {
 
-		ParserableScene parserableScene = generateParserableSceneFromFile(pathToTextFile);
+		ParserableScene parserableScene = generateParserableSceneFromFile(request.pathToSceneDescription);
 
 		Scene scene = generateSceneWithSetData(parserableScene.setParserData.objectParams);
 
-		scene.setCamera(generateCamera(parserableScene.cameraParserData.objectParams));
+		scene.setCamera(generateCamera(parserableScene.cameraParserData.objectParams, request.resultImageHeight,
+				request.resultImageWidth));
 
 		ArrayList<Material> MaterialsArray = new ArrayList<>();
 		for (ParserableObject parserData : parserableScene.materialsParserArray) {
@@ -37,7 +38,7 @@ public class SceneParser {
 		}
 
 		if (LOG)
-			System.out.println("Finished parsing scene file " + pathToTextFile);
+			System.out.println("Finished parsing scene file " + request.pathToSceneDescription);
 
 		return scene;
 	}
@@ -118,7 +119,7 @@ public class SceneParser {
 		return new Scene(backgroundColor, rootNumberOfShadowRay, maximumNumberOfRecurtsions, superSampling);
 	}
 
-	private static Camera generateCamera(String[] cameraParams) {
+	private static Camera generateCamera(String[] cameraParams, int imageHeightInPixels, int imageWidthInPixels) {
 		int i = 0;
 
 		double x, y, z;
@@ -140,7 +141,8 @@ public class SceneParser {
 		double screenDistance = Double.parseDouble(cameraParams[i++]);
 		double screenWidthRelativeToScene = Double.parseDouble(cameraParams[i++]);
 
-		return new Camera(position, lookAtDirection, upDirection, screenDistance, screenWidthRelativeToScene);
+		return new Camera(position, lookAtDirection, upDirection, screenDistance, screenWidthRelativeToScene,
+				imageHeightInPixels, imageWidthInPixels);
 	}
 
 	private static Material generateMaterial(String[] materialParams) {
@@ -179,12 +181,13 @@ public class SceneParser {
 		}
 		return null;
 	}
-	
-	private static RenderableTriangle generateRenderableTriangle(String[] objectParams,ArrayList<Material> MaterialsArray) {
-		
+
+	private static RenderableTriangle generateRenderableTriangle(String[] objectParams,
+			ArrayList<Material> MaterialsArray) {
+
 	}
 
-	private static RenderablePlane generateRenderablePlane(String[] objectParams,ArrayList<Material> MaterialsArray) {
+	private static RenderablePlane generateRenderablePlane(String[] objectParams, ArrayList<Material> MaterialsArray) {
 		int i = 0;
 
 		double x, y, z;
@@ -195,11 +198,12 @@ public class SceneParser {
 
 		double planeOffset = Double.parseDouble(objectParams[i++]);
 		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]));
-		
+
 		return new RenderablePlane(planeNormal, planeOffset, material);
 	}
-	
-	private static RenderableSphere generateRenderableSphere(String[] objectParams,ArrayList<Material> MaterialsArray) {
+
+	private static RenderableSphere generateRenderableSphere(String[] objectParams,
+			ArrayList<Material> MaterialsArray) {
 		int i = 0;
 
 		double x, y, z;
@@ -210,10 +214,9 @@ public class SceneParser {
 
 		double sphereRadius = Double.parseDouble(objectParams[i++]);
 		Material material = MaterialsArray.get(Integer.parseInt(objectParams[i++]));
-		
+
 		return new RenderableSphere(sphereCenterPosition, sphereRadius, material);
 	}
-
 
 	private static LightSource generateLightSource(String[] lightSourceParams) {
 		int i = 0;

@@ -7,7 +7,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			Request request = new Request(args);
-			Scene scene = SceneParser.getSceneFromTextFile(request.pathToSceneDescription);
+			Scene scene = SceneParser.getSceneFromTextFile(request);
 			IRenderer renderer = new RayTracingRenderer();
 			renderer.renderScene(scene, request.pathToResultImage, 
 					request.resultImageWidth, request.resultImageHeight);
