@@ -32,11 +32,11 @@ public class Color {
 	}
 
 	public Color getColorMultiplyByConstant(double constant) {
-		return new Color(this.red * constant, this.blue * constant, this.green * constant);
+		return new Color(this.red * constant, this.green * constant, this.blue * constant);
 	}
 
-	public Color getColorMultiplyByColor(Color color2) {
-		return new Color(this.red * color2.red, this.blue * color2.blue, this.green * color2.green);
+	public Color getColorMultiplyByColor(Color color2) {	
+		return new Color(this.red * color2.red, this.green * color2.green, this.blue * color2.blue);
 	}
 
 	private void boundComponentsToOne() {
