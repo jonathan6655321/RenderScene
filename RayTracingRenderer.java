@@ -20,18 +20,25 @@ public class RayTracingRenderer implements IRenderer {
 
 	public boolean renderScene(Scene scene, String pathToResultImage, int resultImageWidth, int resultImageHeight) {
 
-		byte[] imageRGBData = new byte[resultImageWidth * resultImageHeight * 3];
-
-		for (int row = 0; row < resultImageHeight; row++) {
-			for (int col = 0; col < resultImageWidth; col++) {
+		int superSampledWidth = resultImageWidth*SUPER_SAMPLING_LEVEL;
+		int superSampledHeight = resultImageHeight*SUPER_SAMPLING_LEVEL;
+		
+//		byte[] imageRGBData = new byte[resultImageWidth * resultImageHeight * 3];
+		byte[] superSampledRGBData = new byte[superSampledWidth*superSampledHeight*3];
+		
+		for (int row = 0; row < superSampledHeight; row++) {
+			for (int col = 0; col < superSampledWidth; col++) {
 				// TODO super sampling
 				Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
 						resultImageWidth);
 
 				byte[] color = getColorFromRay(scene, firstRay, 0, null).getColorByteArray();
-				System.arraycopy(color, 0, imageRGBData, (row * resultImageWidth + col) * 3, 3);
+				System.arraycopy(color, 0, superSampledRGBData, ((row * superSampledWidth) + col) * 3, 3);
 			}
 		}
+		
+		byte[] imageRGBData = getImageRGBDataFromSuperSample(superSampledRGBData, superSampledWidth, superSampledHeight);
+		
 		return saveImage(resultImageWidth, imageRGBData, pathToResultImage);
 	}
 
@@ -165,6 +172,45 @@ public class RayTracingRenderer implements IRenderer {
 		return getColorFromRay(scene, reflectionRay, recursionDepth, collision.getCollisionObject());
 	}
 
+	private byte[] getImageRGBDataFromSuperSample(byte[] superSampledRGBData, int superSampledWidth, int superSampledHeight)
+	{
+		int imageWidth = (superSampledWidth/SUPER_SAMPLING_LEVEL);
+		int imageHeight = (superSampledHeight/SUPER_SAMPLING_LEVEL);
+		byte[] imageRGBData = new byte[imageHeight*imageWidth*3];
+		
+		int pixelRow,pixelCol;
+		byte[] rgb;
+		for(int i=0; i < imageRGBData.length; i+=3)
+		{
+			pixelRow = i / imageWidth;
+			pixelCol = i % imageWidth;
+			rgb = calculatePixelColorFromSuperSample(pixelRow, pixelCol, superSampledRGBData, superSampledWidth);
+			System.arraycopy(rgb, 0, imageRGBData, imageHeight, 3);
+		}
+		return imageRGBData;
+	}
+	
+	byte[] calculatePixelColorFromSuperSample(int pixelRow, int pixelCol, byte[] superSampledRGBData, int superSampledWidth)
+	{
+		byte[] rgb = {0,0,0};
+		int offsetDueToFullRows = pixelRow*superSampledWidth*SUPER_SAMPLING_LEVEL*3;
+		int offsetInLastRow = pixelCol*SUPER_SAMPLING_LEVEL*3;
+		int startLocationInSuperSample = offsetDueToFullRows + offsetInLastRow;
+		
+		for (int i=0; i < SUPER_SAMPLING_LEVEL; i++)
+		{
+			for(int j=0; j < SUPER_SAMPLING_LEVEL; j++)
+			{
+				rgb[0] += superSampledRGBData[startLocationInSuperSample + (i*superSampledWidth*3) + (j*3)];
+				rgb[1] += superSampledRGBData[startLocationInSuperSample + (i*superSampledWidth*3) + (j*3) + 1];
+				rgb[2] += superSampledRGBData[startLocationInSuperSample + (i*superSampledWidth*3) + (j*3) + 2];
+			}
+		}
+		rgb[0] /= SUPER_SAMPLING_LEVEL*SUPER_SAMPLING_LEVEL;
+		rgb[1] /= SUPER_SAMPLING_LEVEL*SUPER_SAMPLING_LEVEL;
+		rgb[2] /= SUPER_SAMPLING_LEVEL*SUPER_SAMPLING_LEVEL;
+		return rgb;
+	}
 	/*
 	 * Saves RGB data as an image in png format to the specified location.
 	 */
