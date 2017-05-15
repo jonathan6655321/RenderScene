@@ -1,7 +1,9 @@
 package RenderScene;
 
 import java.io.IOException;
-
+// jonathans args: 
+// C:\Development\Graphics\temp\Transparency.txt C:\Development\Graphics\temp\trans.png 500 500
+// C:\Development\Graphics\temp\yoda.txt C:\Development\Graphics\temp\yoda.png 500 500
 public class Main {
 		
 	public static void main(String[] args) {
