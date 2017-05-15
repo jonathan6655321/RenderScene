@@ -256,9 +256,9 @@ public class SceneParser {
 
 		double specularIntensity = Double.parseDouble(lightSourceParams[i++]);
 		double shadowIntensity = Double.parseDouble(lightSourceParams[i++]);
-		double lightWidth = Double.parseDouble(lightSourceParams[i++]);
+		double lightRadius = Double.parseDouble(lightSourceParams[i++]);
 
-		return new LightSource(position, lightColor, specularIntensity, shadowIntensity, lightWidth);
+		return new LightSource(position, lightColor, specularIntensity, shadowIntensity, lightRadius);
 	}
 
 	private static class ParserableScene {

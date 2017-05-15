@@ -16,6 +16,7 @@ public class Collision {
 		if(normalToCollisionPoint == null){
 			normalToCollisionPoint= collisionObject.getNormalAtPoint(collisionPoint);
 		}
+		normalToCollisionPoint.normalize();
 		return normalToCollisionPoint;
 	}
 	
@@ -23,7 +24,7 @@ public class Collision {
 		return collisionPoint;
 	}
 	
-	public RenderableObject getcollisionObject(){
+	public RenderableObject getCollisionObject(){
 		return collisionObject;
 	}
 }

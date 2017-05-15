@@ -2,15 +2,15 @@ package RenderScene;
 
 public class LightSource {
 	private Vector3D position;
-	private double specularIntensity, shadowIntensity, lightWidth;
+	private double specularIntensity, shadowIntensity, lightRadius;
 	private Color lightColor;
 
 	public LightSource(Vector3D position, Color lightColor, double specularIntensity, double shadowIntensity,
-			double lightWidth) {
+			double lightRadius) {
 		this.position = position;
 		this.specularIntensity = specularIntensity;
 		this.shadowIntensity = shadowIntensity;
-		this.lightWidth = lightWidth;
+		this.lightRadius = lightRadius;
 		this.lightColor = lightColor;
 	}
 
@@ -30,7 +30,7 @@ public class LightSource {
 		return lightColor;
 	}
 
-	public double getLightWidth() {
-		return lightWidth;
+	public double getLightRadius() {
+		return lightRadius;
 	}
 }

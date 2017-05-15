@@ -111,5 +111,9 @@ public class Vector3D {
 		return Math.abs(Vector3D.subtract(point1, point2).getMagnitude());
 	}
 	
-	
+	public Vector3D getReflectionVector(Vector3D normal)
+	{
+		double d = -2*dotProduct(this, normal);
+		return add(normal.getVectorMultipliedByConstant(d), this);
+	}
 }
