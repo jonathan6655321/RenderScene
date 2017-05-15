@@ -181,7 +181,7 @@ public class RayTracingRenderer implements IRenderer {
 		
 		int pixelRow,pixelCol;
 		byte[] rgb;
-		for(int i=0; i < imageRGBData.length; i+=3)
+		for(int i=0; i < imageRGBData.length/3; i+=3)
 		{
 			pixelRow = i / imageWidth;
 			pixelCol = i % imageWidth;
