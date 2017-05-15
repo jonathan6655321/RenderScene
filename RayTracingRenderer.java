@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 
 public class RayTracingRenderer implements IRenderer {
 	final double CLOSE_DOUBLE = 0.000000001;
+	final int SUPER_SAMPLING_LEVEL = 2;
 
 	public boolean renderScene(Scene scene, String pathToResultImage, int resultImageWidth, int resultImageHeight) {
 
