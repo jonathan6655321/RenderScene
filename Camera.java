@@ -22,8 +22,6 @@ public class Camera {
 		this.upDirection = fixUpDirection(lookAtDirection, upDirection);
 		this.screenDistance = screenDistance;
 		this.screenWidthRelativeToScene = screenWidthRelativeToScene;
-		
-		initScreenParams(imageHeightInPixels, imageWidthInPixels);
 	}
 
 	public void initScreenParams(int imageHeightInPixels, int imageWidthInPixels)
