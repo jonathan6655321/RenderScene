@@ -36,7 +36,7 @@ public class Color {
 	}
 
 	public Color getColorMultiplyByColor(Color color2) {
-		return new Color(this.red * color2.red, this.blue * color2.blue, this.green * this.green);
+		return new Color(this.red * color2.red, this.blue * color2.blue, this.green * color2.green);
 	}
 
 	private void boundComponentsToOne() {
