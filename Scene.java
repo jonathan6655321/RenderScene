@@ -59,7 +59,7 @@ public class Scene {
 		return backgroundColor;
 	}
 
-	public Collision getFirstCollision(Ray ray, RenderableObject objectToIgnore) {
+	public Collision getFirstCollisionWithRay(Ray ray, RenderableObject objectToIgnore) {
 		Collision minCollision = null;
 		double minCollisionDistance = Double.POSITIVE_INFINITY;
 		for (RenderableObject rObj : getObjectsInScene()) {

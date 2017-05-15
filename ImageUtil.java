@@ -46,6 +46,9 @@ public class ImageUtil {
 			for (int j = 0; j < superSamplingLevel; j++) {
 				int currentIndex = startLocationInSuperSample + (i * superSampledWidth * 3) + (j * 3);
 				for (int k = 0; k < 3; k++) {
+					if(currentIndex + k == 750000){
+						System.out.println(";p;");
+					}
 					rgbInt[k] += superSampledRGBData[currentIndex + k];
 					if (superSampledRGBData[currentIndex + k] < 0) {
 						rgbInt[k] += 256;
