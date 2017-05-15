@@ -1,7 +1,5 @@
 package RenderScene;
 
-import java.awt.image.CropImageFilter;
-
 public class Camera {
 	private Vector3D cameraPosition; 
 	private Vector3D lookAtDirection; // will also be the view plane normal

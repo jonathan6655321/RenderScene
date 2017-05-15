@@ -12,7 +12,6 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
