@@ -186,7 +186,7 @@ public class RayTracingRenderer implements IRenderer {
 			pixelRow = i / imageWidth;
 			pixelCol = i % imageWidth;
 			rgb = calculatePixelColorFromSuperSample(pixelRow, pixelCol, superSampledRGBData, superSampledWidth);
-			System.arraycopy(rgb, 0, imageRGBData, imageHeight, 3);
+			System.arraycopy(rgb, 0, imageRGBData, i, 3);
 		}
 		return imageRGBData;
 	}
