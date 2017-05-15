@@ -57,18 +57,14 @@ public class RayTracingRenderer implements IRenderer {
 			backGroundColor.multiplyByConstant(transparency);
 			rayColor.add(backGroundColor);
 		}
-		
+
 		// // calculating reflective color component: TODO ??
 		Color reflectiveColor = getReflectiveColor(scene, ray, recursionDepth, firstCollision);
-		if (reflectiveColor != null)
-		{
+		if (reflectiveColor != null) {
 			reflectiveColor = reflectiveColor.getColorMultiplyByColor(collisionObject.getMaterial().reflectionColor);
-			if(reflectiveColor != null)
-			{
-				rayColor.add(reflectiveColor);							
-			}
+			rayColor.add(reflectiveColor);
 		}
-		
+
 		Color specularAndDiffuseColor;
 		{
 			// calculate Diffuse Color Component:
@@ -85,11 +81,6 @@ public class RayTracingRenderer implements IRenderer {
 		specularAndDiffuseColor.multiplyByConstant(1 - transparency);
 		rayColor.add(specularAndDiffuseColor);
 
-		// calculating reflection component:
-		Color reflectionColor = getReflectiveColor(scene, ray, recursionDepth, firstCollision);
-		if (reflectionColor != null) {
-			rayColor.add(reflectionColor);
-		}
 		// Color += backgroundColor*transperancy (Color)
 		// Color += (diffuse + specular) * (1 - transparency) (Color)
 		// Color += (reflection color) * reflection (Color)
