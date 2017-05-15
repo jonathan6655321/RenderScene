@@ -77,11 +77,7 @@ public class Camera {
 	
 	public Vector3D getPositionOfPixelAtRowCol(int row, int col)
 	{
-		Vector3D diffToRight = onePixelRightDiff.getVectorMultipliedByConstant(col);
-		Vector3D diffDown = onePixelDownVector.getVectorMultipliedByConstant(row);
-		Vector3D diffToPixelAtRowColFromTopLeftPixel = Vector3D.add(diffToRight, diffDown);
-		
-		return Vector3D.add(diffToPixelAtRowColFromTopLeftPixel, topLeftPixelPosition);
+		return Vector3D.addRowColToStartingPosition(topLeftPixelPosition, onePixelDownVector, onePixelRightDiff, row, col);
 	}
 	
 	public Vector3D fixUpDirection(Vector3D lookAtDirection, Vector3D upDirection)

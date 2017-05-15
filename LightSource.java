@@ -33,4 +33,8 @@ public class LightSource {
 	public double getLightRadius() {
 		return lightRadius;
 	}
+	
+	public Ray getRayToFromLightSourceToPoint(Vector3D point){
+		return new Ray(position, Vector3D.subtract(point, position));
+	}
 }

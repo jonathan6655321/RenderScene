@@ -78,4 +78,21 @@ public class Scene {
 		return minCollision;
 	}
 
+	public ArrayList<Collision> getAllCollision(Ray ray, double minCollisionDistance, RenderableObject objectToIgnore) {
+		ArrayList<Collision> collisions = new ArrayList<>();
+		for (RenderableObject rObj : getObjectsInScene()) {
+			if (objectToIgnore != rObj) {
+				Collision collision = rObj.getCollision(ray);
+				if (collision != null) {
+					double collitionDistance = Vector3D.getPointsDistance(collision.getCollisionPoint(),
+							ray.startPosition);
+					if (collitionDistance < minCollisionDistance) {
+						collisions.add(collision);
+					}
+				}
+			}
+		}
+		return collisions;
+	}
+
 }

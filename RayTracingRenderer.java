@@ -1,50 +1,35 @@
 package RenderScene;
 
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 public class RayTracingRenderer implements IRenderer {
-	final double CLOSE_DOUBLE = 0.000000001;
-	final int SUPER_SAMPLING_LEVEL = 2;
+	final double CLOSE_DOUBLE = 0.00000001;
 
 	public boolean renderScene(Scene scene, String pathToResultImage, int resultImageWidth, int resultImageHeight) {
 
-		int superSampledWidth = resultImageWidth * SUPER_SAMPLING_LEVEL;
-		int superSampledHeight = resultImageHeight * SUPER_SAMPLING_LEVEL;
+		int superSampledWidth = resultImageWidth * scene.getSuperSampling();
+		int superSampledHeight = resultImageHeight * scene.getSuperSampling();
 
-		// byte[] imageRGBData = new byte[resultImageWidth * resultImageHeight *
-		// 3];
-		byte[] superSampledRGBData = new byte[superSampledWidth * superSampledHeight * 3];
+		byte[] superSampledRGBData = renderSceneToRGBByteArray(scene, superSampledWidth, resultImageHeight);
 
-		scene.getCamera().initScreenParams(superSampledHeight, superSampledWidth);
+		byte[] imageRGBData = ImageUtil.getImageRGBDataFromSuperSample(scene.getSuperSampling(), superSampledRGBData,
+				superSampledWidth, superSampledHeight);
 
-		for (int row = 0; row < superSampledHeight; row++) {
-			for (int col = 0; col < superSampledWidth; col++) {
-				// TODO super sampling
+		return ImageUtil.saveImage(resultImageWidth, imageRGBData, pathToResultImage);
+	}
+
+	private byte[] renderSceneToRGBByteArray(Scene scene, int resultImageWidth, int resultImageHeight) {
+		scene.getCamera().initScreenParams(resultImageHeight, resultImageWidth);
+		byte[] imageRGBData = new byte[resultImageWidth * resultImageHeight * 3];
+
+		for (int row = 0; row < resultImageHeight; row++) {
+			for (int col = 0; col < resultImageWidth; col++) {
 				Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
 						resultImageWidth);
 
 				byte[] color = getColorFromRay(scene, firstRay, 0, null).getColorByteArray();
-				System.arraycopy(color, 0, superSampledRGBData, ((row * superSampledWidth) + col) * 3, 3);
+				System.arraycopy(color, 0, imageRGBData, ((row * resultImageWidth) + col) * 3, 3);
 			}
 		}
-
-		byte[] imageRGBData = getImageRGBDataFromSuperSample(superSampledRGBData, superSampledWidth,
-				superSampledHeight);
-
-		return saveImage(resultImageWidth, imageRGBData, pathToResultImage);
+		return imageRGBData;
 	}
 
 	private Color getColorFromRay(Scene scene, Ray ray, int recursionDepth, RenderableObject objectToIgnore) {
@@ -104,7 +89,7 @@ public class RayTracingRenderer implements IRenderer {
 
 	}
 
-	private Color getSpecularColor(Scene scene, Ray rayToCollision, Collision collision) {
+	private static Color getSpecularColor(Scene scene, Ray rayToCollision, Collision collision) {
 		Color color = new Color(0, 0, 0);
 		for (LightSource lightSource : scene.getLightSources()) {
 			color.add(getSpecularColorFromLightSource(scene, rayToCollision, collision, lightSource));
@@ -115,62 +100,226 @@ public class RayTracingRenderer implements IRenderer {
 
 	}
 
-	private Color getSpecularColorFromLightSource(Scene scene, Ray rayToCollision, Collision collision,
+	private static Color getSpecularColorFromLightSource(Scene scene, Ray rayToCollision, Collision collision,
 			LightSource lightSource) {
-		// TODO: soft shadow here as well? probably not(because then we won't be
-		// able to do mirrors.
+
 		Ray rayFromLightSourceToCollision = new Ray(lightSource.getPosition(),
 				Vector3D.subtract(collision.getCollisionPoint(), lightSource.getPosition()));
-		Vector3D highlightVecotr = rayFromLightSourceToCollision.direction
-				.getReflectionVector(collision.getNormalToCollisionPoint());
-		highlightVecotr.normalize();
+		Color fullyHitColor = lightSource.getLightColor();
 
-		rayToCollision.direction.normalize();
+		double precentOfFullyHitLight = getFullyHitLightPrecent_SoftShadow_Specular(scene, rayToCollision,
+				rayFromLightSourceToCollision, collision, lightSource);
+		return fullyHitColor.getColorMultiplyByConstant(precentOfFullyHitLight * lightSource.getShadowIntensity());
 
-		double cosAngle = Math.abs(Vector3D.dotProduct(rayToCollision.direction, highlightVecotr));
-		double phongValue = Math.pow(cosAngle, collision.getCollisionObject().getMaterial().phongSpecularity);
+		// TODO: soft shadow here as well? probably not(because then we won't be
+		// able to do mirrors.
 
-		Color colorFullyHit = lightSource.getLightColor()
-				.getColorMultiplyByConstant(phongValue * lightSource.getSpecularIntensity());
-		if (isNotCoveredFromLightSourcePoint(scene, collision.getCollisionPoint(), rayFromLightSourceToCollision)) {
-			return colorFullyHit;
-		} else {
-			return colorFullyHit.getColorMultiplyByConstant(1 - lightSource.getShadowIntensity());
-		}
+		// Color fullyHitColor = lightSource.getLightColor()
+		// .getColorMultiplyByConstant(phongValue *
+		// lightSource.getSpecularIntensity());
+		//
+		// double precentOfFullyHitLight =
+		// getFullyHitLight_CountingObjectTransperancy(scene,
+		// rayFromLightSourceToCollision, collision, lightSource);
+		// return
+		// fullyHitColor.getColorMultiplyByConstant(precentOfFullyHitLight);
+
+		// if (isNotCoveredFromLightSourcePoint(scene,
+		// collision.getCollisionPoint(), rayFromLightSourceToCollision)) {
+		// return colorFullyHit;
+		// } else {
+		// if
+		// (isNotCoveredFromLightSourcePointBySameObject(collision.getCollisionObject(),
+		// collision.getCollisionPoint(), rayFromLightSourceToCollision)) {
+		// return colorFullyHit.getColorMultiplyByConstant(1 -
+		// lightSource.getShadowIntensity());
+		// }
+		// return new Color(0, 0, 0);
+		// }
 	}
 
 	private Color getDiffuseColor(Scene scene, Ray ray, Collision collision) {
 		Color color = new Color(0, 0, 0);
+		Vector3D collisionPoint = collision.getCollisionPoint();
 		for (LightSource lightSource : scene.getLightSources()) {
-			color.add(getDiffuseColorFromLightSource(scene, ray, collision, lightSource));
+			Ray rayFromLightSourceToCollision = lightSource.getRayToFromLightSourceToPoint(collisionPoint);
+
+			double diffuseCoefficient = Vector3D.getCosineOfAngleBetweenVectors(rayFromLightSourceToCollision.direction,
+					collision.getNormalToCollisionPoint());
+
+			Color currentRayColor = getColorFromLightSourceAndCollision(scene, ray, rayFromLightSourceToCollision,
+					collision, lightSource);
+
+			currentRayColor = currentRayColor.getColorMultiplyByConstant(diffuseCoefficient);
+			color.add(currentRayColor);
 		}
 		return color.getColorMultiplyByColor(collision.getCollisionObject().getMaterial().diffuseColor);
 	}
 
-	private Color getDiffuseColorFromLightSource(Scene scene, Ray ray, Collision collision, LightSource lightSource) {
-		// TODO softShadow
-		Ray rayFromLightSourceToCollision = new Ray(lightSource.getPosition(),
-				Vector3D.subtract(collision.getCollisionPoint(), lightSource.getPosition()));
-		rayFromLightSourceToCollision.direction.normalize();
-		double cosAngle = Math.abs(
-				Vector3D.dotProduct(rayFromLightSourceToCollision.direction, collision.getNormalToCollisionPoint()));
-		Color fullyHitColor = lightSource.getLightColor().getColorMultiplyByConstant(cosAngle);
+	private Color getColorFromLightSourceAndCollision(Scene scene, Ray ray, Ray rayFromLightSourceToCollision,
+			Collision collision, LightSource lightSource) {
+		Color fullyHitColor = lightSource.getLightColor();
+		double precentOfFullyHitLight = getLightRaySoftShadowPrecent(scene, rayFromLightSourceToCollision, collision,
+				lightSource);
+		return fullyHitColor.getColorMultiplyByConstant(precentOfFullyHitLight);
 
-		if (isNotCoveredFromLightSourcePoint(scene, collision.getCollisionPoint(), rayFromLightSourceToCollision)) {
-			return fullyHitColor;
-		} else {
-			return fullyHitColor.getColorMultiplyByConstant(1 - lightSource.getShadowIntensity());
-		}
 	}
 
-	private boolean isNotCoveredFromLightSourcePoint(Scene scene, Vector3D pointToCheck,
-			Ray rayFromLightSourceToPoint) {
-		// TODO softShadow
-		Collision collisionFromLightSource = scene.getFirstCollision(rayFromLightSourceToPoint, null);
-		if (collisionFromLightSource == null) {
-			throw new RuntimeException("should be impossible. must collide");
+	private double getLightRaySoftShadowPrecent(Scene scene, Ray rayFromLightSourceToCollision, Collision collision,
+			LightSource lightSource) {
+		int rootNumberOfShadowRay = scene.getRootNumberOfShadowRay();
+		int numberOfShadowRay = rootNumberOfShadowRay * rootNumberOfShadowRay;
+		Vector3D[] vectors = Vector3D.getOrtogonalComplement(rayFromLightSourceToCollision.direction);
+		// make both vector have the needed magnitude for the radius
+		for (int i = 0; i < 2; i++)
+			vectors[i] = vectors[i]
+					.getVectorInSameDirectionWithMagnitude(2 * lightSource.getLightRadius() / rootNumberOfShadowRay);
+
+		// for each source point check how much hit:
+		Vector3D lightSourcePoint;
+		double precent = 0;
+		for (int row = -(rootNumberOfShadowRay / 2); row < rootNumberOfShadowRay - (rootNumberOfShadowRay / 2); row++) {
+			for (int col = -(rootNumberOfShadowRay / 2); col < rootNumberOfShadowRay
+					- (rootNumberOfShadowRay / 2); col++) {
+				lightSourcePoint = Vector3D.addRowColToStartingPosition(lightSource.getPosition(), vectors[0],
+						vectors[1], row, col);
+				rayFromLightSourceToCollision = new Ray(lightSourcePoint,
+						Vector3D.subtract(collision.getCollisionPoint(), lightSourcePoint));
+				double precentOfFullyHitLight = getFullyHitLight_CountingObjectTransperancy(scene,
+						rayFromLightSourceToCollision, collision, lightSource);
+				precent += precentOfFullyHitLight / numberOfShadowRay;
+			}
 		}
-		return (Vector3D.getPointsDistance(collisionFromLightSource.getCollisionPoint(), pointToCheck) < CLOSE_DOUBLE);
+
+		return precent;
+	}
+
+	// private double getFullyHitLightPrecent_SoftShadow_Diffuse(Scene scene,
+	// Ray rayFromLightSourceToCollision,
+	// Collision collision, LightSource lightSource) {
+	// Vector3D vectorX = null, vectorY;
+	// int rootNumberOfShadowRay = scene.getRootNumberOfShadowRay();
+	// for (int i = 0; i < 3; i++) {
+	// vectorX = new Vector3D(0, 0, 0);
+	// vectorX.vector[i] = 1;
+	// if (Vector3D.dotProduct(vectorX, rayFromLightSourceToCollision.direction)
+	// != 0) {
+	// break;
+	// }
+	// }
+	// vectorY = Vector3D.crossProduct(rayFromLightSourceToCollision.direction,
+	// vectorX);
+	// vectorX = Vector3D.crossProduct(rayFromLightSourceToCollision.direction,
+	// vectorY);
+	// vectorY = vectorY
+	// .getVectorInSameDirectionWithMagnitude(2 * lightSource.getLightRadius() /
+	// rootNumberOfShadowRay);
+	// vectorX = vectorX
+	// .getVectorInSameDirectionWithMagnitude(2 * lightSource.getLightRadius() /
+	// rootNumberOfShadowRay);
+	//
+	// Vector3D lightSourcePoint;
+	// double precent = 0;
+	// for (int i = -(rootNumberOfShadowRay / 2); i < rootNumberOfShadowRay -
+	// (rootNumberOfShadowRay / 2); i++) {
+	// for (int j = -(rootNumberOfShadowRay / 2); j < rootNumberOfShadowRay -
+	// (rootNumberOfShadowRay / 2); j++) {
+	// lightSourcePoint = Vector3D.add(lightSource.getPosition(),
+	// vectorX.getVectorMultipliedByConstant(i));
+	// lightSourcePoint = Vector3D.add(lightSourcePoint,
+	// vectorY.getVectorMultipliedByConstant(i));
+	// rayFromLightSourceToCollision = new Ray(lightSourcePoint,
+	// Vector3D.subtract(collision.getCollisionPoint(), lightSourcePoint));
+	//
+	// double cosAngle =
+	// Math.abs(Vector3D.dotProduct(rayFromLightSourceToCollision.direction,
+	// collision.getNormalToCollisionPoint()));
+	// cosAngle /= rayFromLightSourceToCollision.direction.getMagnitude();
+	//
+	// double precentOfFullyHitLight =
+	// getFullyHitLight_CountingObjectTransperancy(scene,
+	// rayFromLightSourceToCollision, collision, lightSource);
+	// precent += precentOfFullyHitLight * cosAngle * precentOfFullyHitLight
+	// / (rootNumberOfShadowRay * rootNumberOfShadowRay);
+	// }
+	// }
+	// return precent;
+	// }
+
+	private double getFullyHitLightPrecent_SoftShadow_Specular(Scene scene, Ray rayToCollision,
+			Ray rayFromLightSourceToCollision, Collision collision, LightSource lightSource) {
+		Vector3D vectorX = null, vectorY;
+		int rootNumberOfShadowRay = scene.getRootNumberOfShadowRay();
+		for (int i = 0; i < 3; i++) {
+			vectorX = new Vector3D(0, 0, 0);
+			vectorX.vector[i] = 1;
+			if (Vector3D.dotProduct(vectorX, rayFromLightSourceToCollision.direction) != 0) {
+				break;
+			}
+		}
+		vectorY = Vector3D.crossProduct(rayFromLightSourceToCollision.direction, vectorX);
+		vectorX = Vector3D.crossProduct(rayFromLightSourceToCollision.direction, vectorY);
+		vectorY = vectorY
+				.getVectorInSameDirectionWithMagnitude(2 * lightSource.getLightRadius() / rootNumberOfShadowRay);
+		vectorX = vectorX
+				.getVectorInSameDirectionWithMagnitude(2 * lightSource.getLightRadius() / rootNumberOfShadowRay);
+
+		Vector3D lightSourcePoint;
+		double precent = 0;
+		for (int i = -(rootNumberOfShadowRay / 2); i < rootNumberOfShadowRay - (rootNumberOfShadowRay / 2); i++) {
+			for (int j = -(rootNumberOfShadowRay / 2); j < rootNumberOfShadowRay - (rootNumberOfShadowRay / 2); j++) {
+				lightSourcePoint = Vector3D.add(lightSource.getPosition(), vectorX.getVectorMultipliedByConstant(i));
+				lightSourcePoint = Vector3D.add(lightSourcePoint, vectorY.getVectorMultipliedByConstant(i));
+				rayFromLightSourceToCollision = new Ray(lightSourcePoint,
+						Vector3D.subtract(collision.getCollisionPoint(), lightSourcePoint));
+
+				Vector3D highlightVecotr = rayFromLightSourceToCollision.direction
+						.getReflectionVector(collision.getNormalToCollisionPoint());
+				highlightVecotr.normalize();
+
+				// rayToCollision.direction.normalize();
+
+				double cosAngle = Math.abs(Vector3D.dotProduct(rayToCollision.direction, highlightVecotr));
+				cosAngle /= rayToCollision.direction.getMagnitude();
+				double phongValue = Math.pow(cosAngle, collision.getCollisionObject().getMaterial().phongSpecularity);
+
+				double precentOfFullyHitLight = getFullyHitLight_CountingObjectTransperancy(scene,
+						rayFromLightSourceToCollision, collision, lightSource);
+				precent += precentOfFullyHitLight * phongValue * precentOfFullyHitLight
+						/ (rootNumberOfShadowRay * rootNumberOfShadowRay);
+			}
+		}
+		return precent;
+	}
+
+	private double getFullyHitLight_CountingObjectTransperancy(Scene scene, Ray rayFromLightSourceToCollision,
+			Collision collision, LightSource lightSource) {
+		double precent = 1;
+		double minDistance = Vector3D.getPointsDistance(rayFromLightSourceToCollision.startPosition,
+				collision.getCollisionPoint());
+		ArrayList<Collision> collisionsWithOtherObjectArray = scene.getAllCollision(rayFromLightSourceToCollision,
+				minDistance, collision.getCollisionObject());
+		for (Collision collisionWithOtherObject : collisionsWithOtherObjectArray) {
+			precent *= collisionWithOtherObject.getCollisionObject().getMaterial().transperancy;
+		}
+		if (!collisionsWithOtherObjectArray.isEmpty()) {
+			precent = Math.max(1 - lightSource.getShadowIntensity(), precent);
+		}
+		if (isCoveredFromLightSourcePointBySameObject(collision.getCollisionObject(), collision.getCollisionPoint(),
+				rayFromLightSourceToCollision)) {
+			return 0;
+		}
+		return precent;
+	}
+
+	private boolean isCoveredFromLightSourcePointBySameObject(RenderableObject rObj, Vector3D pointToCheck,
+			Ray rayFromLightSourceToPoint) {
+		Collision collisionFromLightSource = rObj.getCollision(rayFromLightSourceToPoint);
+		if (collisionFromLightSource == null) {
+			// TODO:throw new RuntimeException("should be impossible. must
+			// collide");
+		}
+		return (Vector3D.getPointsDistance(collisionFromLightSource.getCollisionPoint(), pointToCheck) > CLOSE_DOUBLE);
 	}
 
 	private Color getBackgroundColor(Scene scene, Ray ray, int recursionDepth, Collision collision) {
@@ -182,80 +331,5 @@ public class RayTracingRenderer implements IRenderer {
 		Ray reflectionRay = new Ray(collision.getCollisionPoint(),
 				ray.direction.getReflectionVector(collision.getNormalToCollisionPoint()));
 		return getColorFromRay(scene, reflectionRay, recursionDepth, collision.getCollisionObject());
-	}
-
-	private byte[] getImageRGBDataFromSuperSample(byte[] superSampledRGBData, int superSampledWidth,
-			int superSampledHeight) {
-		int imageWidth = (superSampledWidth / SUPER_SAMPLING_LEVEL);
-		int imageHeight = (superSampledHeight / SUPER_SAMPLING_LEVEL);
-		byte[] imageRGBData = new byte[imageHeight * imageWidth * 3];
-
-		int pixelRow, pixelCol;
-		byte[] rgb;
-		for (int i = 0; i < imageRGBData.length / 3; i++) {
-			pixelRow = i / imageWidth;
-			pixelCol = i % imageWidth;
-			rgb = calculatePixelColorFromSuperSample(pixelRow, pixelCol, superSampledRGBData, superSampledWidth);
-			System.arraycopy(rgb, 0, imageRGBData, i * 3, 3);
-		}
-		return imageRGBData;
-	}
-
-	byte[] calculatePixelColorFromSuperSample(int pixelRow, int pixelCol, byte[] superSampledRGBData,
-			int superSampledWidth) {
-		byte[] rgb = { 0, 0, 0 };
-		int offsetDueToFullRows = pixelRow * superSampledWidth * SUPER_SAMPLING_LEVEL * 3;
-		int offsetInLastRow = pixelCol * SUPER_SAMPLING_LEVEL * 3;
-		int startLocationInSuperSample = offsetDueToFullRows + offsetInLastRow;
-
-		int[] rgbInt = new int[3];
-		for (int i = 0; i < SUPER_SAMPLING_LEVEL; i++) {
-			for (int j = 0; j < SUPER_SAMPLING_LEVEL; j++) {
-				int currentIndex = startLocationInSuperSample + (i * superSampledWidth * 3) + (j * 3);
-				for (int k = 0; k < 3; k++) {
-					rgbInt[k] += superSampledRGBData[currentIndex + k];
-					if (superSampledRGBData[currentIndex + k] < 0) {
-						rgbInt[k] += 256;
-					}
-				}
-			}
-		}
-		for (int k = 0; k < 3; k++) {
-			rgb[k] = (byte) (rgbInt[k] / (SUPER_SAMPLING_LEVEL * SUPER_SAMPLING_LEVEL));
-		}
-		return rgb;
-	}
-
-	/*
-	 * Saves RGB data as an image in png format to the specified location.
-	 */
-	private static boolean saveImage(int width, byte[] rgbData, String fileName) {
-		try {
-
-			BufferedImage image = bytes2RGB(width, rgbData);
-			ImageIO.write(image, "png", new File(fileName));
-
-		} catch (IOException e) {
-			System.out.println("ERROR SAVING FILE: " + e.getMessage());
-			return false;
-		}
-		return true;
-
-	}
-
-	/*
-	 * Producing a BufferedImage that can be saved as png from a byte array of
-	 * RGB values.
-	 */
-	private static BufferedImage bytes2RGB(int width, byte[] buffer) {
-		int height = buffer.length / width / 3;
-		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-		ColorModel cm = new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-		SampleModel sm = cm.createCompatibleSampleModel(width, height);
-		DataBufferByte db = new DataBufferByte(buffer, width * height);
-		WritableRaster raster = Raster.createWritableRaster(sm, db, null);
-		BufferedImage result = new BufferedImage(cm, raster, false, null);
-
-		return result;
 	}
 }
