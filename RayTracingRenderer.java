@@ -53,7 +53,7 @@ public class RayTracingRenderer implements IRenderer {
 		// calculating background color component:
 		Color backGroundColor = getBackgroundColor(scene, ray, recursionDepth, firstCollision);
 		if (backGroundColor != null) {
-			backGroundColor.multiplyByConstant(transparency);
+			backGroundColor = backGroundColor.getColorMultiplyByConstant(transparency);
 			rayColor.add(backGroundColor);
 		}
 
@@ -77,7 +77,7 @@ public class RayTracingRenderer implements IRenderer {
 			specularAndDiffuseColor = diffuseColor;
 		}
 
-		specularAndDiffuseColor.multiplyByConstant(1 - transparency);
+		specularAndDiffuseColor = specularAndDiffuseColor.getColorMultiplyByConstant(1 - transparency);
 		rayColor.add(specularAndDiffuseColor);
 
 		// Color += backgroundColor*transperancy (Color)
