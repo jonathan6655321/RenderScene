@@ -35,7 +35,7 @@ public class Color {
 		return new Color(this.red * constant, this.green * constant, this.blue * constant);
 	}
 
-	public Color getColorMultiplyByColor(Color color2) {	
+	public Color getColorMultiplyByColor(Color color2) {
 		return new Color(this.red * color2.red, this.green * color2.green, this.blue * color2.blue);
 	}
 
@@ -46,4 +46,7 @@ public class Color {
 		return;
 	}
 
+	public boolean isNotZero() {
+		return this.red != 0 || this.blue != 0 || this.green != 0;
+	}
 }

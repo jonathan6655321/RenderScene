@@ -59,35 +59,40 @@ public class RayTracingRenderer implements IRenderer {
 		double transparency = collisionObject.getMaterial().transperancy;
 
 		// calculating background color component:
-		Color backGroundColor = getBackgroundColor(scene, ray, recursionDepth, firstCollision);
-		if (backGroundColor != null) {
-			backGroundColor = backGroundColor.getColorMultiplyByConstant(transparency);
-			rayColor.add(backGroundColor);
+		if (transparency != 0) {
+			Color backGroundColor = getBackgroundColor(scene, ray, recursionDepth, firstCollision);
+			if (backGroundColor != null) {
+				backGroundColor = backGroundColor.getColorMultiplyByConstant(transparency);
+				rayColor.add(backGroundColor);
+			}
 		}
 
 		// // calculating reflective color component: TODO ??
-		Color reflectiveColor = getReflectiveColor(scene, ray, recursionDepth, firstCollision);
-		if (reflectiveColor != null) {
-			reflectiveColor = reflectiveColor.getColorMultiplyByColor(collisionObject.getMaterial().reflectionColor);
-			rayColor.add(reflectiveColor);
+		if (collisionObject.getMaterial().reflectionColor.isNotZero()) {
+			Color reflectiveColor = getReflectiveColor(scene, ray, recursionDepth, firstCollision);
+			if (reflectiveColor != null) {
+				reflectiveColor = reflectiveColor
+						.getColorMultiplyByColor(collisionObject.getMaterial().reflectionColor);
+				rayColor.add(reflectiveColor);
+			}
 		}
+		if (1 - transparency != 0) {
+			Color specularAndDiffuseColor;
+			{
+				// calculate Diffuse Color Component:
+				Color diffuseColor = getDiffuseColor(scene, ray, firstCollision);
 
-		Color specularAndDiffuseColor;
-		{
-			// calculate Diffuse Color Component:
-			Color diffuseColor = getDiffuseColor(scene, ray, firstCollision);
+				// calculate Specular Color Component:
+				Color specularColor = getSpecularColor(scene, ray, firstCollision);
 
-			// calculate Specular Color Component:
-			Color specularColor = getSpecularColor(scene, ray, firstCollision);
+				// add them both
+				diffuseColor.add(specularColor);
+				specularAndDiffuseColor = diffuseColor;
+			}
 
-			// add them both
-			diffuseColor.add(specularColor);
-			specularAndDiffuseColor = diffuseColor;
+			specularAndDiffuseColor = specularAndDiffuseColor.getColorMultiplyByConstant(1 - transparency);
+			rayColor.add(specularAndDiffuseColor);
 		}
-
-		specularAndDiffuseColor = specularAndDiffuseColor.getColorMultiplyByConstant(1 - transparency);
-		rayColor.add(specularAndDiffuseColor);
-
 		// Color += backgroundColor*transperancy (Color)
 		// Color += (diffuse + specular) * (1 - transparency) (Color)
 		// Color += (reflection color) * reflection (Color)
@@ -112,20 +117,22 @@ public class RayTracingRenderer implements IRenderer {
 		// able to do mirrors.
 		Ray rayFromLightSourceToCollision = new Ray(lightSource.getPosition(),
 				Vector3D.subtract(collision.getCollisionPoint(), lightSource.getPosition()));
+		Vector3D highlightVecotr = rayFromLightSourceToCollision.direction
+				.getReflectionVector(collision.getNormalToCollisionPoint());
+		highlightVecotr.normalize();
+
+		rayToCollision.direction.normalize();
+
+		double cosAngle = Math.abs(Vector3D.dotProduct(rayToCollision.direction, highlightVecotr));
+		double phongValue = Math.pow(cosAngle, collision.getCollisionObject().getMaterial().phongSpecularity);
+
+		Color colorFullyHit = lightSource.getLightColor()
+				.getColorMultiplyByConstant(phongValue * lightSource.getSpecularIntensity());
 		if (isNotCoveredFromLightSourcePoint(scene, collision.getCollisionPoint(), rayFromLightSourceToCollision)) {
-			Vector3D highlightVecotr = rayFromLightSourceToCollision.direction
-					.getReflectionVector(collision.getNormalToCollisionPoint());
-			highlightVecotr.normalize();
-
-			rayToCollision.direction.normalize();
-
-			double cosAngle = Math.abs(Vector3D.dotProduct(rayToCollision.direction, highlightVecotr));
-			double phongValue = Math.pow(cosAngle, collision.getCollisionObject().getMaterial().phongSpecularity);
-
-			return lightSource.getLightColor()
-					.getColorMultiplyByConstant(phongValue * lightSource.getSpecularIntensity());
+			return colorFullyHit;
+		} else {
+			return colorFullyHit.getColorMultiplyByConstant(1 - lightSource.getShadowIntensity());
 		}
-		return new Color(0, 0, 0);
 	}
 
 	private Color getDiffuseColor(Scene scene, Ray ray, Collision collision) {
