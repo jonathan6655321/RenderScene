@@ -111,7 +111,7 @@ public class RayTracingUtil {
 
 		lightSourceColorOnObject = lightSourceColorOnObject
 				.getColorMultiplyByConstant(phongValue * lightSource.getSpecularIntensity());
-		
+
 		return lightSourceColorOnObject;
 
 	}
@@ -176,6 +176,9 @@ public class RayTracingUtil {
 	private static boolean isCoveredFromLightSourcePointBySameObject(Collision collision,
 			Ray rayFromLightSourceToPoint) {
 		Collision collisionFromLightSource = collision.getCollisionObject().getCollision(rayFromLightSourceToPoint);
+		if (collisionFromLightSource == null) {
+			return false;
+		}
 		return !collisionFromLightSource.getCollisionPoint().equals(collision.getCollisionPoint());
 	}
 

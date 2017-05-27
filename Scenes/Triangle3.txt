@@ -1,35 +1,220 @@
 # Camera: 	px   	py   	pz 	lx  	ly  	lz 	ux  	uy  	uz 	sc_dist	sc_width
-cam 	  	0.0   	15	-20 	0   	0   	-1  	0   	1   	0  	1.4	1
+cam 	  	0    	0	-2.8 	0   	0   	0  	0   	1   	0  	1	1
 # Settings: 	bgr  	bgg  	bgb	sh_rays	rec_max SS
-set 		1  	1  	1   	5 	10           3
+set 		1  	1  	1   	1 	10	1
 
 # Material:	dr    	dg    	db	sr   	sg   	sb 	rr   	rg  	rb	phong 	trans
-mtl		0.95	0.07	0.07	1	1	1	0.2	0.1	0.1	30	0
-mtl		0.95	0.07	0.95	1	1	1	0.1	0.2	0.1	30	0
-mtl		0.07	0.07	0.95	1	1	1	0.1	0.1	0.2	30	0
-mtl		0.9	0.9	0.9	0.5	0.5	0.5	0.05	0.05	0.05	30	0
-mtl		0.1	0.1	0.1	1	1	1	0.1	0.1	0.1	30	0
-mtl		0.95	0.95	0.07	1	1	1	0.2	0.2	0	30	0
-mtl		0.7	0.0	0.7	0	0	0	0	0	0	1	0
+mtl		0.95	0.5	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.95	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.5	0.95	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.6	0.4	0.9	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.7	0.7	0.7	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.24	0.22	0.22	0.7	0.7	0.8	0	0	0	100	0
+mtl		0.5	0.5	0.8	0.5	0.5	0.8	0	0.3	0.4	100	0
 
-# Plane:		nx	ny	nz	offset	mat_idx
-pln		0	1	0	-1	7
 
-# Triangles:	p0   	p1   	p2  	 	mat_idx
-trg	       -0.5 0 1        0 5 1      5 0 1		1 
-trg                  -5 -2 -5        -3 3 -2    -2 -1 -5		3
+# Plane:	nx	ny	nz	offset	mat_idx
+pln		0	1	0	-1	1
+pln		0	-1	0	-1	2
+pln		1	0	0	-1	3
+pln		-1	0	0	-1	4
+pln		0	0	-1	-1	5
+pln		0	0	1	-3      5
+
+# Sphere:	cx   	cy   	cz  	radius 	mat_idx
+sph		0.5	-0.7	0.6	0.3	6
+sph		-0.3	-0.5	-0.5	0.2	7
 
 # Lights:	px	py	pz	r	g	b	spec	shadow	width
-lgt		0	3	0	0.5	0.5	0.3	1	0.9	1
-lgt		-3	3	-3	0.5	0.5	0.3	1	0.9	1
-lgt		-3	3	3	0.5	0.5	0.3	1	0.9	1
-lgt		3	3	-3	0.5	0.5	0.3	1	0.9	1
-lgt		3	3	3	0.5	0.5	0.3	1	0.9	1
+lgt		0	0	0	0.5	0.5	0.5	1	0.5	0
+lgt		0	0	-1	0.5	0.5	0.5	1	0	0
+#lgt		-0.9	-0.9	-0.9	0.8	0.8	0.8	1	0	0
 
 
-sph		-0.5 0 1    	0.1   	1
-sph		0 5 1    	0.1   	1
-sph		5 0 1    	0.1   	1
-sph		  -2 -1 -5  	0.1   	1
-sph	  -3 3 -2   	0.1   	1
-sph		 -5 -2 -5  	0.1   	1
+#<FRAME_SPERATOR>#1
+
+
+
+# Camera: 	px   	py   	pz 	lx  	ly  	lz 	ux  	uy  	uz 	sc_dist	sc_width
+cam 	  	0.05    	0	-2.75 	0   	0   	0  	0   	1   	0  	1	1
+# Settings: 	bgr  	bgg  	bgb	sh_rays	rec_max SS
+set 		1  	1  	1   	1 	10	1
+
+# Material:	dr    	dg    	db	sr   	sg   	sb 	rr   	rg  	rb	phong 	trans
+mtl		0.95	0.5	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.95	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.5	0.95	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.6	0.4	0.9	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.7	0.7	0.7	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.24	0.22	0.22	0.7	0.7	0.8	0	0	0	100	0
+mtl		0.5	0.5	0.8	0.5	0.5	0.8	0	0.3	0.4	100	0
+
+
+# Plane:	nx	ny	nz	offset	mat_idx
+pln		0	1	0	-1	1
+pln		0	-1	0	-1	2
+pln		1	0	0	-1	3
+pln		-1	0	0	-1	4
+pln		0	0	-1	-1	5
+pln		0	0	1	-3      5
+
+# Sphere:	cx   	cy   	cz  	radius 	mat_idx
+sph		0.5	-0.7	0.6	0.3	6
+sph		-0.3	-0.5	-0.5	0.2	7
+
+# Lights:	px	py	pz	r	g	b	spec	shadow	width
+lgt		0	0	0	0.5	0.5	0.5	1	0.5	0
+lgt		0	0	-1	0.5	0.5	0.5	1	0	0
+#lgt		-0.9	-0.9	-0.9	0.8	0.8	0.8	1	0	0
+
+
+
+#<FRAME_SPERATOR>#2
+
+
+
+# Camera: 	px   	py   	pz 	lx  	ly  	lz 	ux  	uy  	uz 	sc_dist	sc_width
+cam 	  	0.1    	0	-2.7 	0   	0   	0  	0   	1   	0  	1	1
+# Settings: 	bgr  	bgg  	bgb	sh_rays	rec_max SS
+set 		1  	1  	1   	1 	10	1
+
+# Material:	dr    	dg    	db	sr   	sg   	sb 	rr   	rg  	rb	phong 	trans
+mtl		0.95	0.5	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.95	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.5	0.95	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.6	0.4	0.9	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.7	0.7	0.7	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.24	0.22	0.22	0.7	0.7	0.8	0	0	0	100	0
+mtl		0.5	0.5	0.8	0.5	0.5	0.8	0	0.3	0.4	100	0
+
+
+# Plane:	nx	ny	nz	offset	mat_idx
+pln		0	1	0	-1	1
+pln		0	-1	0	-1	2
+pln		1	0	0	-1	3
+pln		-1	0	0	-1	4
+pln		0	0	-1	-1	5
+pln		0	0	1	-3      5
+
+# Sphere:	cx   	cy   	cz  	radius 	mat_idx
+sph		0.5	-0.7	0.6	0.3	6
+sph		-0.3	-0.5	-0.5	0.2	7
+
+# Lights:	px	py	pz	r	g	b	spec	shadow	width
+lgt		0	0	0	0.5	0.5	0.5	1	0.5	0
+lgt		0	0	-1	0.5	0.5	0.5	1	0	0
+#lgt		-0.9	-0.9	-0.9	0.8	0.8	0.8	1	0	0
+
+
+
+#<FRAME_SPERATOR>#3
+
+
+
+# Camera: 	px   	py   	pz 	lx  	ly  	lz 	ux  	uy  	uz 	sc_dist	sc_width
+cam 	  	0.15    	0	-2.65 	0   	0   	0  	0   	1   	0  	1	1
+# Settings: 	bgr  	bgg  	bgb	sh_rays	rec_max SS
+set 		1  	1  	1   	1 	10	1
+
+# Material:	dr    	dg    	db	sr   	sg   	sb 	rr   	rg  	rb	phong 	trans
+mtl		0.95	0.5	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.95	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.5	0.95	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.6	0.4	0.9	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.7	0.7	0.7	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.24	0.22	0.22	0.7	0.7	0.8	0	0	0	100	0
+mtl		0.5	0.5	0.8	0.5	0.5	0.8	0	0.3	0.4	100	0
+
+
+# Plane:	nx	ny	nz	offset	mat_idx
+pln		0	1	0	-1	1
+pln		0	-1	0	-1	2
+pln		1	0	0	-1	3
+pln		-1	0	0	-1	4
+pln		0	0	-1	-1	5
+pln		0	0	1	-3      5
+
+# Sphere:	cx   	cy   	cz  	radius 	mat_idx
+sph		0.5	-0.7	0.6	0.3	6
+sph		-0.3	-0.5	-0.5	0.2	7
+
+# Lights:	px	py	pz	r	g	b	spec	shadow	width
+lgt		0	0	0	0.5	0.5	0.5	1	0.5	0
+lgt		0	0	-1	0.5	0.5	0.5	1	0	0
+#lgt		-0.9	-0.9	-0.9	0.8	0.8	0.8	1	0	0
+
+
+
+#<FRAME_SPERATOR>#4
+
+
+
+# Camera: 	px   	py   	pz 	lx  	ly  	lz 	ux  	uy  	uz 	sc_dist	sc_width
+cam 	  	0.2    	0	-2.6 	0   	0   	0  	0   	1   	0  	1	1
+# Settings: 	bgr  	bgg  	bgb	sh_rays	rec_max SS
+set 		1  	1  	1   	1 	10	1
+
+# Material:	dr    	dg    	db	sr   	sg   	sb 	rr   	rg  	rb	phong 	trans
+mtl		0.95	0.5	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.95	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.5	0.95	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.6	0.4	0.9	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.7	0.7	0.7	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.24	0.22	0.22	0.7	0.7	0.8	0	0	0	100	0
+mtl		0.5	0.5	0.8	0.5	0.5	0.8	0	0.3	0.4	100	0
+
+
+# Plane:	nx	ny	nz	offset	mat_idx
+pln		0	1	0	-1	1
+pln		0	-1	0	-1	2
+pln		1	0	0	-1	3
+pln		-1	0	0	-1	4
+pln		0	0	-1	-1	5
+pln		0	0	1	-3      5
+
+# Sphere:	cx   	cy   	cz  	radius 	mat_idx
+sph		0.5	-0.7	0.6	0.3	6
+sph		-0.3	-0.5	-0.5	0.2	7
+
+# Lights:	px	py	pz	r	g	b	spec	shadow	width
+lgt		0	0	0	0.5	0.5	0.5	1	0.5	0
+lgt		0	0	-1	0.5	0.5	0.5	1	0	0
+#lgt		-0.9	-0.9	-0.9	0.8	0.8	0.8	1	0	0
+
+
+
+#<FRAME_SPERATOR>#5
+
+
+
+# Camera: 	px   	py   	pz 	lx  	ly  	lz 	ux  	uy  	uz 	sc_dist	sc_width
+cam 	  	0.25    	0	-2.55 	0   	0   	0  	0   	1   	0  	1	1
+# Settings: 	bgr  	bgg  	bgb	sh_rays	rec_max SS
+set 		1  	1  	1   	1 	10	1
+
+# Material:	dr    	dg    	db	sr   	sg   	sb 	rr   	rg  	rb	phong 	trans
+mtl		0.95	0.5	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.95	0.4	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.4	0.5	0.95	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.6	0.4	0.9	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.7	0.7	0.7	0.3	0.3	0.3	0	0	0	4	0
+mtl		0.24	0.22	0.22	0.7	0.7	0.8	0	0	0	100	0
+mtl		0.5	0.5	0.8	0.5	0.5	0.8	0	0.3	0.4	100	0
+
+
+# Plane:	nx	ny	nz	offset	mat_idx
+pln		0	1	0	-1	1
+pln		0	-1	0	-1	2
+pln		1	0	0	-1	3
+pln		-1	0	0	-1	4
+pln		0	0	-1	-1	5
+pln		0	0	1	-3      5
+
+# Sphere:	cx   	cy   	cz  	radius 	mat_idx
+sph		0.5	-0.7	0.6	0.3	6
+sph		-0.3	-0.5	-0.5	0.2	7
+
+# Lights:	px	py	pz	r	g	b	spec	shadow	width
+lgt		0	0	0	0.5	0.5	0.5	1	0.5	0
+lgt		0	0	-1	0.5	0.5	0.5	1	0	0
+#lgt		-0.9	-0.9	-0.9	0.8	0.8	0.8	1	0	0

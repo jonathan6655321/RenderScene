@@ -1,5 +1,6 @@
 package RenderScene;
 
+import java.awt.image.BufferedImage;
 import java.util.stream.IntStream;
 
 public class RayTracingRenderer implements IRenderer {
@@ -8,7 +9,7 @@ public class RayTracingRenderer implements IRenderer {
 		System.out.println("Creating new renderer: Ray Tracing Renderer.");
 	}
 	
-	public boolean renderScene(Scene scene, String pathToResultImage, int resultImageWidth, int resultImageHeight) {
+	public BufferedImage renderScene(Scene scene, int resultImageWidth, int resultImageHeight) {
 		
 		System.out.println("Rendered scene dimensions: " + resultImageWidth + "x" + resultImageHeight);
 		
@@ -26,10 +27,10 @@ public class RayTracingRenderer implements IRenderer {
 		System.out.print("Creating image...			");
 		byte[] imageRGBData = ImageUtil.getImageRGBDataFromSuperSample(scene.getSuperSampling(), superSampledRGBData,
 				superSampledWidth, superSampledHeight);
+		BufferedImage image = ImageUtil.bytes2RGB(resultImageWidth, imageRGBData);
 		System.out.println("Finished!");
 
-		return ImageUtil.saveImage(resultImageWidth, imageRGBData, pathToResultImage);
-
+		return image;
 	}
 
 	private static byte[] renderSceneToRGBByteArray(Scene scene, int resultImageWidth, int resultImageHeight) {
@@ -40,10 +41,6 @@ public class RayTracingRenderer implements IRenderer {
 			int max = Math.min(rowsHandaledPerIteration * (row1 + 1), resultImageWidth);
 			for (int row = row1 * rowsHandaledPerIteration; row < max; row++) {
 				for (int col = 0; col < resultImageHeight; col++) {
-					if(row == 480 && col == 250){
-						row++;
-						row--;
-					}
 					Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
 							resultImageWidth);
 

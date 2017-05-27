@@ -13,6 +13,8 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
 
 public class ImageUtil {
 	public static byte[] getImageRGBDataFromSuperSample(int superSamplingLevel, byte[] superSampledRGBData,
@@ -62,10 +64,9 @@ public class ImageUtil {
 	/*
 	 * Saves RGB data as an image in png format to the specified location.
 	 */
-	public static boolean saveImage(int width, byte[] rgbData, String fileName) {
+	public static boolean saveImage(BufferedImage image, String fileName) {
 		try {
 			System.out.print("Saving Image...				");
-			BufferedImage image = bytes2RGB(width, rgbData);
 			ImageIO.write(image, "png", new File(fileName));
 			System.out.println("Finished!");
 		} catch (IOException e) {
@@ -80,7 +81,7 @@ public class ImageUtil {
 	 * Producing a BufferedImage that can be saved as png from a byte array of
 	 * RGB values.
 	 */
-	private static BufferedImage bytes2RGB(int width, byte[] buffer) {
+	public static BufferedImage bytes2RGB(int width, byte[] buffer) {
 		int height = buffer.length / width / 3;
 		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
 		ColorModel cm = new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
@@ -88,7 +89,29 @@ public class ImageUtil {
 		DataBufferByte db = new DataBufferByte(buffer, width * height);
 		WritableRaster raster = Raster.createWritableRaster(sm, db, null);
 		BufferedImage result = new BufferedImage(cm, raster, false, null);
-
+		
 		return result;
+	}
+
+	public static void saveGifAnimation(BufferedImage[] images, String fileName, int frameRate) {
+		try {
+			System.out.print("Saving Gif...				");
+			// create a new BufferedOutputStream with the last argument
+			ImageOutputStream output = new FileImageOutputStream(new File(fileName));
+
+			// create a gif sequence with the type of the first image, 1
+			// second
+			// between frames, which loops continuously
+			GifSequenceWriter writer = new GifSequenceWriter(output, images[0].getType(), frameRate, true);
+
+			// write out the images to our sequence...
+			for (int i = 0; i < images.length; i++) {
+				writer.writeToSequence(images[i]);
+			}
+
+			System.out.println("Finished!");
+		} catch (IOException e) {
+			System.out.println("ERROR SAVING FILE: " + e.getMessage());
+		}
 	}
 }

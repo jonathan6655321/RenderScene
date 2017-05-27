@@ -1,5 +1,6 @@
 package RenderScene;
+import java.awt.image.BufferedImage;
 
 public interface IRenderer {
-	public abstract boolean renderScene(Scene scene, String pathToResultImage, int resultImageWidth, int resultImageHeight);
+	public abstract BufferedImage renderScene(Scene scene, int resultImageWidth, int resultImageHeight);
 }

@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class SceneParser {
 	final static boolean LOG = true;
@@ -15,10 +17,101 @@ public class SceneParser {
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	public static Scene getSceneFromTextFile(Request request) throws IOException, RayTracerException {
+	public static Scene[] getScenesFromTextFile(Request request) throws IOException, RayTracerException {
 
-		ParserableScene parserableScene = generateParserableSceneFromFile(request.pathToSceneDescription);
+		ParserableScene[] parserableScenes = generateParserableScenesFromFile(request.pathToSceneDescription);
 
+		Scene[] scenes = new Scene[parserableScenes.length];
+		for (int frameNumber = 0; frameNumber < parserableScenes.length; frameNumber++) {
+			scenes[frameNumber] = generateSceneFromParserableScene(parserableScenes[frameNumber], request);
+		}
+		if (LOG)
+			System.out.println("Finished parsing scene file " + request.pathToSceneDescription);
+
+		return scenes;
+	}
+
+	private static ParserableScene[] generateParserableScenesFromFile(String pathToTextFile)
+			throws IOException, RayTracerException {
+		System.out.println("Started parsing scene file " + pathToTextFile);
+
+		Scanner scanner = new Scanner(new FileReader(pathToTextFile));
+		// read until end of file
+		String fileInString = scanner.useDelimiter("\\A").next();
+		scanner.close();
+
+		String[] frames = fileInString.split("<FRAME_SPERATOR>");
+		int numberOfFrames = frames.length;
+		ParserableScene[] parserableScenes = new ParserableScene[numberOfFrames];
+		for (int frameNumber = 0; frameNumber < numberOfFrames; frameNumber++) {
+			parserableScenes[frameNumber] = generateParserableSceneFromString(frames[frameNumber]);
+		}
+		return parserableScenes;
+	}
+
+	private static ParserableScene generateParserableSceneFromString(String sceneTextData)
+			throws IOException, RayTracerException {
+		System.out.println("Started parsing first frame");
+
+		BufferedReader reader = new BufferedReader(new StringReader(sceneTextData));
+		String currentObjectString = null;
+		int lineNum = 0;
+
+		ParserableScene parserableScene = new ParserableScene();
+
+		if (LOG)
+
+			while ((currentObjectString = reader.readLine()) != null) {
+				currentObjectString = currentObjectString.trim();
+				++lineNum;
+
+				if (currentObjectString.isEmpty() || (currentObjectString.charAt(0) == '#')) { // comment
+																								// //
+																								// comment
+					continue;
+				} else {
+					String currentObjectType = currentObjectString.substring(0, 3).toLowerCase();
+					String[] currentObjectParams = currentObjectString.substring(3).trim().toLowerCase().split("\\s+");
+
+					if (currentObjectType.equals("cam")) {
+						parserableScene.cameraParserData = new ParserableObject(currentObjectType, currentObjectParams);
+					} else if (currentObjectType.equals("set")) {
+						parserableScene.setParserData = new ParserableObject(currentObjectType, currentObjectParams);
+					} else if (currentObjectType.equals("mtl")) {
+						parserableScene.materialsParserArray
+								.add(new ParserableObject(currentObjectType, currentObjectParams));
+					} else if (currentObjectType.equals("sph") || currentObjectType.equals("pln")
+							|| currentObjectType.equals("trg")) {
+						parserableScene.renderableObjectParserArray
+								.add(new ParserableObject(currentObjectType, currentObjectParams));
+					} else if (currentObjectType.equals("lgt")) {
+						parserableScene.lightSourceParserArray
+								.add(new ParserableObject(currentObjectType, currentObjectParams));
+					} else {
+						System.out.println(String.format("ERROR: Did not recognize object: %s (line %d)",
+								currentObjectType, lineNum));
+						continue;
+					}
+					if (LOG)
+						System.out.println(String.format("Parsed %s (line %d)", currentObjectType, lineNum));
+				}
+			}
+		if (parserableScene.setParserData == null) {
+			System.out.println("Missing Set Data");
+			reader.close();
+			throw new IOException();
+		} else if (parserableScene.cameraParserData == null) {
+			System.out.println("Missing Set Data");
+			reader.close();
+			throw new IOException();
+		}
+
+		reader.close();
+
+		return parserableScene;
+	}
+
+	private static Scene generateSceneFromParserableScene(ParserableScene parserableScene, Request request) {
 		Scene scene = generateSceneWithSetData(parserableScene.setParserData.objectParams);
 
 		scene.setCamera(generateCamera(parserableScene.cameraParserData.objectParams, request.resultImageHeight,
@@ -36,72 +129,7 @@ public class SceneParser {
 		for (ParserableObject parserData : parserableScene.lightSourceParserArray) {
 			scene.addLightSource(generateLightSource(parserData.objectParams));
 		}
-
-		if (LOG)
-			System.out.println("Finished parsing scene file " + request.pathToSceneDescription);
-
 		return scene;
-	}
-
-	private static ParserableScene generateParserableSceneFromFile(String pathToTextFile)
-			throws IOException, RayTracerException {
-		BufferedReader reader = new BufferedReader(new FileReader(pathToTextFile));
-		String currentObjectString = null;
-		int lineNum = 0;
-
-		ParserableScene parserableScene = new ParserableScene();
-
-		if (LOG)
-			System.out.println("Started parsing scene file " + pathToTextFile);
-
-		while ((currentObjectString = reader.readLine()) != null) {
-			currentObjectString = currentObjectString.trim();
-			++lineNum;
-
-			if (currentObjectString.isEmpty() || (currentObjectString.charAt(0) == '#')) { // comment
-																							// //
-																							// comment
-				continue;
-			} else {
-				String currentObjectType = currentObjectString.substring(0, 3).toLowerCase();
-				String[] currentObjectParams = currentObjectString.substring(3).trim().toLowerCase().split("\\s+");
-
-				if (currentObjectType.equals("cam")) {
-					parserableScene.cameraParserData = new ParserableObject(currentObjectType, currentObjectParams);
-				} else if (currentObjectType.equals("set")) {
-					parserableScene.setParserData = new ParserableObject(currentObjectType, currentObjectParams);
-				} else if (currentObjectType.equals("mtl")) {
-					parserableScene.materialsParserArray
-							.add(new ParserableObject(currentObjectType, currentObjectParams));
-				} else if (currentObjectType.equals("sph") || currentObjectType.equals("pln")
-						|| currentObjectType.equals("trg")) {
-					parserableScene.renderableObjectParserArray
-							.add(new ParserableObject(currentObjectType, currentObjectParams));
-				} else if (currentObjectType.equals("lgt")) {
-					parserableScene.lightSourceParserArray
-							.add(new ParserableObject(currentObjectType, currentObjectParams));
-				} else {
-					System.out.println(
-							String.format("ERROR: Did not recognize object: %s (line %d)", currentObjectType, lineNum));
-					continue;
-				}
-				if (LOG)
-					System.out.println(String.format("Parsed %s (line %d)", currentObjectType, lineNum));
-			}
-		}
-		if (parserableScene.setParserData == null) {
-			System.out.println("Missing Set Data");
-			reader.close();
-			throw new IOException();
-		} else if (parserableScene.cameraParserData == null) {
-			System.out.println("Missing Set Data");
-			reader.close();
-			throw new IOException();
-		}
-
-		reader.close();
-
-		return parserableScene;
 	}
 
 	private static Scene generateSceneWithSetData(String[] setParams) {
