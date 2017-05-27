@@ -13,7 +13,8 @@ public class Main {
 			IRenderer renderer = new RayTracingRenderer();
 			renderer.renderScene(scene, request.pathToResultImage, 
 					request.resultImageWidth, request.resultImageHeight);
-			
+			System.out.println("Render scene completed successfully.");
+
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println(e.getMessage());

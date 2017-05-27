@@ -4,18 +4,32 @@ import java.util.stream.IntStream;
 
 public class RayTracingRenderer implements IRenderer {
 	private static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-
+	public RayTracingRenderer() {
+		System.out.println("Creating new renderer: Ray Tracing Renderer.");
+	}
+	
 	public boolean renderScene(Scene scene, String pathToResultImage, int resultImageWidth, int resultImageHeight) {
-
+		
+		System.out.println("Rendered scene dimensions: " + resultImageWidth + "x" + resultImageHeight);
+		
 		int superSampledWidth = resultImageWidth * scene.getSuperSampling();
 		int superSampledHeight = resultImageHeight * scene.getSuperSampling();
 
+		System.out.println("Super sampaling dimensions: " + superSampledWidth + "x" + superSampledHeight);
+		
+		System.out.print("Starting rendering...			");
+		long startTime = System.nanoTime();
 		byte[] superSampledRGBData = renderSceneToRGBByteArray(scene, superSampledWidth, superSampledHeight);
+		long endTime = System.nanoTime();
+		System.out.println("Finished!");System.out.println("Time:					" + (((double)(endTime -startTime))/1000000000) + " Seconds.");
 
+		System.out.print("Creating image...			");
 		byte[] imageRGBData = ImageUtil.getImageRGBDataFromSuperSample(scene.getSuperSampling(), superSampledRGBData,
 				superSampledWidth, superSampledHeight);
+		System.out.println("Finished!");
 
 		return ImageUtil.saveImage(resultImageWidth, imageRGBData, pathToResultImage);
+
 	}
 
 	private static byte[] renderSceneToRGBByteArray(Scene scene, int resultImageWidth, int resultImageHeight) {
@@ -26,6 +40,10 @@ public class RayTracingRenderer implements IRenderer {
 			int max = Math.min(rowsHandaledPerIteration * (row1 + 1), resultImageWidth);
 			for (int row = row1 * rowsHandaledPerIteration; row < max; row++) {
 				for (int col = 0; col < resultImageHeight; col++) {
+					if(row == 480 && col == 250){
+						row++;
+						row--;
+					}
 					Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
 							resultImageWidth);
 

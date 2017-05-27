@@ -114,7 +114,10 @@ public class SceneParser {
 
 		int rootNumberOfShadowRay = Integer.parseInt(setParams[i++]);
 		int maximumNumberOfRecurtsions = Integer.parseInt(setParams[i++]);
-		int superSampling = Integer.parseInt(setParams[i++]);
+		int superSampling = 1;
+		if (setParams.length > i) {
+			superSampling = Integer.parseInt(setParams[i++]);
+		}
 
 		return new Scene(backgroundColor, rootNumberOfShadowRay, maximumNumberOfRecurtsions, superSampling);
 	}

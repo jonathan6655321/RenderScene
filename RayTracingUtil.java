@@ -3,7 +3,6 @@ package RenderScene;
 import java.util.ArrayList;
 
 public class RayTracingUtil {
-	final static double CLOSE_DOUBLE = 0.00000001;
 
 	public static Color getColorFromRay(Scene scene, Ray ray, int recursionDepth, RenderableObject objectToIgnore) {
 		recursionDepth++;
@@ -104,29 +103,17 @@ public class RayTracingUtil {
 			Collision collision, LightSource lightSource, Color lightSourceColorOnObject) {
 		Vector3D collisionPoint = collision.getCollisionPoint();
 		Ray rayFromLightSourceToCollision = lightSource.getRayToFromLightSourceToPoint(collisionPoint);
-
 		Vector3D highlightVecotr = rayFromLightSourceToCollision.direction
 				.getReflectionVector(collision.getNormalToCollisionPoint());
 
-		double cosAngle = Math.abs(Vector3D.dotProduct(rayToCollision.direction, highlightVecotr));
-		cosAngle /= rayToCollision.direction.getMagnitude();
-		cosAngle /= highlightVecotr.getMagnitude();
+		double cosAngle = Vector3D.getCosineOfAngleBetweenVectors(rayToCollision.direction, highlightVecotr);
 		double phongValue = Math.pow(cosAngle, collision.getCollisionObject().getMaterial().phongSpecularity);
-		lightSourceColorOnObject = lightSourceColorOnObject.getColorMultiplyByConstant(phongValue);
 
-		Collision firstCollisionOfRay = scene.getFirstCollisionWithRay(rayFromLightSourceToCollision,
-				collision.getCollisionObject());
+		lightSourceColorOnObject = lightSourceColorOnObject
+				.getColorMultiplyByConstant(phongValue * lightSource.getSpecularIntensity());
+		
+		return lightSourceColorOnObject;
 
-		if (firstCollisionOfRay != null) {
-			return lightSourceColorOnObject.getColorMultiplyByConstant(1 - lightSource.getShadowIntensity());
-		} else {
-			if (isCoveredFromLightSourcePointBySameObject(collision.getCollisionObject(), collision.getCollisionPoint(),
-					rayFromLightSourceToCollision)) {
-				return new Color(0, 0, 0);
-			} else {
-				return lightSourceColorOnObject;
-			}
-		}
 	}
 
 	private static Color getColorFromLightSourceAndCollision(Scene scene, Collision collision,
@@ -170,6 +157,9 @@ public class RayTracingUtil {
 	private static double getLightSourceHitCoefficence(Scene scene, Ray rayFromLightSourceToCollision,
 			Collision collision, LightSource lightSource) {
 		double precent = 1;
+		if (isCoveredFromLightSourcePointBySameObject(collision, rayFromLightSourceToCollision)) {
+			return 0;
+		}
 		double minDistance = Vector3D.getPointsDistance(rayFromLightSourceToCollision.startPosition,
 				collision.getCollisionPoint());
 		ArrayList<Collision> collisionsWithOtherObjectArray = scene.getAllCollision(rayFromLightSourceToCollision,
@@ -180,21 +170,13 @@ public class RayTracingUtil {
 		if (!collisionsWithOtherObjectArray.isEmpty()) {
 			precent = Math.max(1 - lightSource.getShadowIntensity(), precent);
 		}
-		if (isCoveredFromLightSourcePointBySameObject(collision.getCollisionObject(), collision.getCollisionPoint(),
-				rayFromLightSourceToCollision)) {
-			return 0;
-		}
 		return precent;
 	}
 
-	private static boolean isCoveredFromLightSourcePointBySameObject(RenderableObject rObj, Vector3D pointToCheck,
+	private static boolean isCoveredFromLightSourcePointBySameObject(Collision collision,
 			Ray rayFromLightSourceToPoint) {
-		Collision collisionFromLightSource = rObj.getCollision(rayFromLightSourceToPoint);
-		if (collisionFromLightSource == null) {
-			// throw new RuntimeException("should be impossible. must
-			// collide");
-		}
-		return (Vector3D.getPointsDistance(collisionFromLightSource.getCollisionPoint(), pointToCheck) > CLOSE_DOUBLE);
+		Collision collisionFromLightSource = collision.getCollisionObject().getCollision(rayFromLightSourceToPoint);
+		return !collisionFromLightSource.getCollisionPoint().equals(collision.getCollisionPoint());
 	}
 
 }

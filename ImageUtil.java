@@ -46,9 +46,6 @@ public class ImageUtil {
 			for (int j = 0; j < superSamplingLevel; j++) {
 				int currentIndex = startLocationInSuperSample + (i * superSampledWidth * 3) + (j * 3);
 				for (int k = 0; k < 3; k++) {
-					if(currentIndex + k == 750000){
-						System.out.println(";p;");
-					}
 					rgbInt[k] += superSampledRGBData[currentIndex + k];
 					if (superSampledRGBData[currentIndex + k] < 0) {
 						rgbInt[k] += 256;
@@ -67,10 +64,10 @@ public class ImageUtil {
 	 */
 	public static boolean saveImage(int width, byte[] rgbData, String fileName) {
 		try {
-
+			System.out.print("Saving Image...				");
 			BufferedImage image = bytes2RGB(width, rgbData);
 			ImageIO.write(image, "png", new File(fileName));
-
+			System.out.println("Finished!");
 		} catch (IOException e) {
 			System.out.println("ERROR SAVING FILE: " + e.getMessage());
 			return false;

@@ -1,6 +1,7 @@
 package RenderScene;
 
 public class Vector3D {
+	static final double CLOSE_DOUBLE = 1e-10;
 	public double[] vector = new double[3];
 
 	public Vector3D(double x, double y, double z) {
@@ -122,5 +123,9 @@ public class Vector3D {
 		Vector3D vcol = colVector.getVectorMultipliedByConstant(col);
 
 		return add(add(startPoint, vrow), vcol);
+	}
+
+	public boolean equals(Vector3D point2) {
+		return (getPointsDistance(this, point2) < CLOSE_DOUBLE);
 	}
 }
