@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SceneParser {
-	final static boolean LOG = true;
+	final static boolean LOG = false;
 
 	/**
 	 * Parses the scene file and creates the scene. Change this function so it
