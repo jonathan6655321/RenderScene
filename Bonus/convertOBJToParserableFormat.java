@@ -7,13 +7,32 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-// "C:\Development\Graphics\RenderScene\temp\yoda\yodaobj.obj" "C:\Development\Graphics\RenderScene\temp\yodaScene.txt" "C:\Development\Graphics\RenderScene\temp\yodaScene.mov" 500 500
 
 
 public class convertOBJToParserableFormat {
-
+	public static String IDO_FOLDER = "F:\\Tau\\Courses\\Computer Science\\2016-2017\\Semester 2\\Graphic\\RenderScene\\git\\RenderScene\\";
+	public static String JOHNATHAN_FOLDER = "C:\\Development\\Graphics\\RenderScene\\";
 	public static void main(String[] args) throws IOException {
-		final int FRAME_NUMBER = 2;
+		
+		String currentUserFolder = IDO_FOLDER;
+		
+		String objFile = "temp\\yoda\\yodaobj.obj";
+		String txtDst = "temp\\yodaScene.txt";
+		String movDst = "temp\\yodaScene.mov";
+		Integer width = 200;
+		Integer height = 200;
+		int superSampeling = 1;
+		int rootNumberOfShadowRay = 1;
+		int recursionDepth = 1;
+		int numberOfFrames = 30;
+		double shadowIntencity = 0.3;
+		
+		
+		args = new String[]{currentUserFolder + objFile ,
+				currentUserFolder + txtDst ,
+				currentUserFolder + movDst , 
+				width.toString(),
+				height.toString()};
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(args[0]));
@@ -158,15 +177,15 @@ public class convertOBJToParserableFormat {
 				double radius = Math.max(maxX - minX, maxY - minY);
 				double planeDistance = radius * 1.2;
 				double lightDistance = radius * 1;
-				String setMaterialsLights = String.join("\n", "set 		1  	1  	1   	1 	1           3",
+				String setMaterialsLights = String.join("\n", "set 1 1 1 "+rootNumberOfShadowRay+" " + recursionDepth + " " + superSampeling,
 						"mtl		0.07	0.97	0.07	0.2 0.2 0.2	0 0 0	30	0",
-						"mtl		0 0 0 0 0 0	1 1 1	30	0",
-						"lgt		0	0	" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	1	1",
-						"lgt		0		" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	1	1",
-						"lgt				" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	1	1",
-						"lgt		0	0	" + (lookAt[2] - planeDistance) + "	0.5	0.5	0.3	1	1	1",
-						"lgt		0		" + (lookAt[1] - planeDistance) + " 0	0.5	0.5	0.3	1	1	1",
-						"lgt				" + (lookAt[0] - planeDistance) + " 0 0	0.5	0.5	0.3	1	1	1",
+						"mtl		0.1 0.1 0.1 0 0 0	1 1 1	30	0",
+						"lgt		0	0	" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt		0		" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt				" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt		0	0	-" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt		0		-" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt				-" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
 						"pln		0	1	0	" + (lookAt[1] + lightDistance) + "	2",
 						"pln		0	-1	0	" + (lookAt[1] + planeDistance) + "	2",
 						"pln		1	0	0	" + (lookAt[0] + planeDistance) + "	2",
@@ -182,11 +201,11 @@ public class convertOBJToParserableFormat {
 
 				PrintWriter writer = new PrintWriter(args[1]);
 
-				for (int i = 0; i < FRAME_NUMBER; i++) {
+				for (int i = 0; i < numberOfFrames; i++) {
 					// change to radius
-					double currentRadius = radius + (endRadius - radius) * i / FRAME_NUMBER;
-					double cos = Math.cos(2 * Math.PI * (i + 1) / FRAME_NUMBER);
-					double sin = Math.sin(2 * Math.PI * (i + 1) / FRAME_NUMBER);
+					double currentRadius = radius + (endRadius - radius) * i / numberOfFrames;
+					double cos = Math.cos(2 * Math.PI * (i + 1) / numberOfFrames);
+					double sin = Math.sin(2 * Math.PI * (i + 1) / numberOfFrames);
 					double newX = startX + currentRadius * cos;
 					double newY = startY + currentRadius * sin;
 
@@ -201,7 +220,7 @@ public class convertOBJToParserableFormat {
 					writer.println(cameraString);
 					writer.println(setMaterialsLights);
 					writer.println(trianglesString);
-					if (i != FRAME_NUMBER - 1) {
+					if (i != numberOfFrames - 1) {
 						writer.println(delimiter);
 					}
 
