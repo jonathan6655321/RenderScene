@@ -24,7 +24,7 @@ public class convertOBJToParserableFormat {
 		int superSampeling = 1;
 		int rootNumberOfShadowRay = 1;
 		int recursionDepth = 1;
-		int numberOfFrames = 30;
+		int numberOfFrames = 5;
 		double shadowIntencity = 0.3;
 		
 		
