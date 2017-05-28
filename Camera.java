@@ -34,7 +34,7 @@ public class Camera {
 	}
 	
 	// TODO image height, width is number of pixels 
-	public Ray getRayWhichLeavesFromPixel(int row, int col, int imageHeight, int imageWidth)
+	public Ray getRayWhichLeavesFromPixel(double row, double col)
 	{
 		Vector3D pixelAtRowColPosition = getPositionOfPixelAtRowCol(row, col);
 		Vector3D rayStartPosition = pixelAtRowColPosition;
@@ -75,7 +75,7 @@ public class Camera {
 		topLeftPixelPosition = Vector3D.add(diffFromCenterToTopLeftPixel, screenCenterPosition);
 	}
 	
-	public Vector3D getPositionOfPixelAtRowCol(int row, int col)
+	public Vector3D getPositionOfPixelAtRowCol(double row, double col)
 	{
 		return Vector3D.addRowColToStartingPosition(topLeftPixelPosition, onePixelDownVector, onePixelRightDiff, row, col);
 	}
