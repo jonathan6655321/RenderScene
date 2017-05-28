@@ -41,9 +41,6 @@ public class RayTracingRenderer implements IRenderer {
 			int max = Math.min(rowsHandaledPerIteration * (row1 + 1), resultImageWidth);
 			for (int row = row1 * rowsHandaledPerIteration; row < max; row++) {
 				for (int col = 0; col < resultImageHeight; col++) {
-					if(col == 250 && row == 480){
-						row += (1-1);
-					}
 					Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row, col, resultImageHeight,
 							resultImageWidth);
 

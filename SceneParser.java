@@ -18,12 +18,14 @@ public class SceneParser {
 	 * @throws FileNotFoundException
 	 */
 	public static Scene[] getScenesFromTextFile(Request request) throws IOException, RayTracerException {
-
+		
 		ParserableScene[] parserableScenes = generateParserableScenesFromFile(request.pathToSceneDescription);
 
 		Scene[] scenes = new Scene[parserableScenes.length];
 		for (int frameNumber = 0; frameNumber < parserableScenes.length; frameNumber++) {
+			System.out.print("Creating frame number " + frameNumber + "...		");
 			scenes[frameNumber] = generateSceneFromParserableScene(parserableScenes[frameNumber], request);
+			System.out.println("Finished!");
 		}
 		if (LOG)
 			System.out.println("Finished parsing scene file " + request.pathToSceneDescription);
@@ -44,14 +46,15 @@ public class SceneParser {
 		int numberOfFrames = frames.length;
 		ParserableScene[] parserableScenes = new ParserableScene[numberOfFrames];
 		for (int frameNumber = 0; frameNumber < numberOfFrames; frameNumber++) {
+			System.out.print("Parsing frame number " + frameNumber + "...		");
 			parserableScenes[frameNumber] = generateParserableSceneFromString(frames[frameNumber]);
+			System.out.println("Finished!");
 		}
 		return parserableScenes;
 	}
 
 	private static ParserableScene generateParserableSceneFromString(String sceneTextData)
 			throws IOException, RayTracerException {
-		System.out.println("Started parsing first frame");
 
 		BufferedReader reader = new BufferedReader(new StringReader(sceneTextData));
 		String currentObjectString = null;
