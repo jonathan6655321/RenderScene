@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+// "C:\Development\Graphics\RenderScene\temp\yoda\yodaobj.obj" "C:\Development\Graphics\RenderScene\temp\yodaScene.txt" "C:\Development\Graphics\RenderScene\temp\yodaScene.mov" 500 500
+
+
 public class convertOBJToParserableFormat {
 
 	public static void main(String[] args) throws IOException {
-		final int FRAME_NUMBER = 30;
+		final int FRAME_NUMBER = 2;
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(args[0]));
@@ -152,15 +155,27 @@ public class convertOBJToParserableFormat {
 							+ triangle[2][1] + " " + triangle[2][2] + " 1\n");
 				}
 
-				String setMaterialsLights = String.join("\n", "set 		1  	1  	1   	1 	10           1",
-						"mtl		0.07	0.97	0.07	1	1	1	0.5	0.5	0.5	30	0",
-						"lgt		0	3	0	0.5	0.5	0.3	1	0.9	1", "lgt		-3	3	-3	0.5	0.5	0.3	1	0.9	1",
-						"lgt		-3	3	3	0.5	0.5	0.3	1	0.9	1", "lgt		3	3	-3	0.5	0.5	0.3	1	0.9	1",
-						"lgt		3	3	3	0.5	0.5	0.3	1	0.9	1\n");
+				double radius = Math.max(maxX - minX, maxY - minY);
+				double planeDistance = radius * 1.2;
+				double lightDistance = radius * 1;
+				String setMaterialsLights = String.join("\n", "set 		1  	1  	1   	1 	1           3",
+						"mtl		0.07	0.97	0.07	0.2 0.2 0.2	0 0 0	30	0",
+						"mtl		0 0 0 0 0 0	1 1 1	30	0",
+						"lgt		0	0	" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	1	1",
+						"lgt		0		" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	1	1",
+						"lgt				" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	1	1",
+						"lgt		0	0	" + (lookAt[2] - planeDistance) + "	0.5	0.5	0.3	1	1	1",
+						"lgt		0		" + (lookAt[1] - planeDistance) + " 0	0.5	0.5	0.3	1	1	1",
+						"lgt				" + (lookAt[0] - planeDistance) + " 0 0	0.5	0.5	0.3	1	1	1",
+						"pln		0	1	0	" + (lookAt[1] + lightDistance) + "	2",
+						"pln		0	-1	0	" + (lookAt[1] + planeDistance) + "	2",
+						"pln		1	0	0	" + (lookAt[0] + planeDistance) + "	2",
+						"pln		-1	0	0	" + (lookAt[0] + planeDistance) + "	2",
+						"pln		0	0	-1	" + (lookAt[2] + planeDistance) + "	2",
+						"pln		0	0	1	" + (lookAt[2] + planeDistance) + "  2");
 
 				String delimiter = "<FRAME_SPERATOR>\n";
 
-				double radius = Math.max(maxX - minX, maxY - minY);
 				double endRadius = radius * 0.75;
 				double startX = lookAt[0]; // center of object
 				double startY = lookAt[1];
@@ -170,8 +185,8 @@ public class convertOBJToParserableFormat {
 				for (int i = 0; i < FRAME_NUMBER; i++) {
 					// change to radius
 					double currentRadius = radius + (endRadius - radius) * i / FRAME_NUMBER;
-					double cos = Math.cos(0.5 * Math.PI * (i + 1) / FRAME_NUMBER);
-					double sin = Math.sin(0.5 * Math.PI * (i + 1) / FRAME_NUMBER);
+					double cos = Math.cos(2 * Math.PI * (i + 1) / FRAME_NUMBER);
+					double sin = Math.sin(2 * Math.PI * (i + 1) / FRAME_NUMBER);
 					double newX = startX + currentRadius * cos;
 					double newY = startY + currentRadius * sin;
 
@@ -200,6 +215,7 @@ public class convertOBJToParserableFormat {
 				writer.print(scene);
 
 				writer.close();
+				RenderScene.Main.main(new String[] { args[1], args[2], args[3], args[4] });
 			} catch (IOException e) {
 				// do something
 				System.out.println("bug\n");
