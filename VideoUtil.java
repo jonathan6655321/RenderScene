@@ -7,7 +7,7 @@ import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import ch.randelshofer.media.quicktime.QuickTimeWriter;
+import RenderScene.movie_package.randelshofer.media.quicktime.QuickTimeWriter;
 
 public class VideoUtil {
 	public final static String TEMP_FILE = "temp.tmp";

@@ -3,7 +3,7 @@ package RenderScene;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import ch.randelshofer.media.quicktime.QuickTimeWriter;
+import RenderScene.movie_package.randelshofer.media.quicktime.QuickTimeWriter;
 
 // jonathans args: 
 // C:\Development\Graphics\temp\Transparency.txt C:\Development\Graphics\temp\trans.png 500 500
