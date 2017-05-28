@@ -59,43 +59,41 @@ public class SceneParser {
 
 		ParserableScene parserableScene = new ParserableScene();
 
-		if (LOG)
+		while ((currentObjectString = reader.readLine()) != null) {
+			currentObjectString = currentObjectString.trim();
+			++lineNum;
 
-			while ((currentObjectString = reader.readLine()) != null) {
-				currentObjectString = currentObjectString.trim();
-				++lineNum;
+			if (currentObjectString.isEmpty() || (currentObjectString.charAt(0) == '#')) { // comment
+																							// //
+																							// comment
+				continue;
+			} else {
+				String currentObjectType = currentObjectString.substring(0, 3).toLowerCase();
+				String[] currentObjectParams = currentObjectString.substring(3).trim().toLowerCase().split("\\s+");
 
-				if (currentObjectString.isEmpty() || (currentObjectString.charAt(0) == '#')) { // comment
-																								// //
-																								// comment
-					continue;
+				if (currentObjectType.equals("cam")) {
+					parserableScene.cameraParserData = new ParserableObject(currentObjectType, currentObjectParams);
+				} else if (currentObjectType.equals("set")) {
+					parserableScene.setParserData = new ParserableObject(currentObjectType, currentObjectParams);
+				} else if (currentObjectType.equals("mtl")) {
+					parserableScene.materialsParserArray
+							.add(new ParserableObject(currentObjectType, currentObjectParams));
+				} else if (currentObjectType.equals("sph") || currentObjectType.equals("pln")
+						|| currentObjectType.equals("trg")) {
+					parserableScene.renderableObjectParserArray
+							.add(new ParserableObject(currentObjectType, currentObjectParams));
+				} else if (currentObjectType.equals("lgt")) {
+					parserableScene.lightSourceParserArray
+							.add(new ParserableObject(currentObjectType, currentObjectParams));
 				} else {
-					String currentObjectType = currentObjectString.substring(0, 3).toLowerCase();
-					String[] currentObjectParams = currentObjectString.substring(3).trim().toLowerCase().split("\\s+");
-
-					if (currentObjectType.equals("cam")) {
-						parserableScene.cameraParserData = new ParserableObject(currentObjectType, currentObjectParams);
-					} else if (currentObjectType.equals("set")) {
-						parserableScene.setParserData = new ParserableObject(currentObjectType, currentObjectParams);
-					} else if (currentObjectType.equals("mtl")) {
-						parserableScene.materialsParserArray
-								.add(new ParserableObject(currentObjectType, currentObjectParams));
-					} else if (currentObjectType.equals("sph") || currentObjectType.equals("pln")
-							|| currentObjectType.equals("trg")) {
-						parserableScene.renderableObjectParserArray
-								.add(new ParserableObject(currentObjectType, currentObjectParams));
-					} else if (currentObjectType.equals("lgt")) {
-						parserableScene.lightSourceParserArray
-								.add(new ParserableObject(currentObjectType, currentObjectParams));
-					} else {
-						System.out.println(String.format("ERROR: Did not recognize object: %s (line %d)",
-								currentObjectType, lineNum));
-						continue;
-					}
-					if (LOG)
-						System.out.println(String.format("Parsed %s (line %d)", currentObjectType, lineNum));
+					System.out.println(
+							String.format("ERROR: Did not recognize object: %s (line %d)", currentObjectType, lineNum));
+					continue;
 				}
+				if (LOG)
+					System.out.println(String.format("Parsed %s (line %d)", currentObjectType, lineNum));
 			}
+		}
 		if (parserableScene.setParserData == null) {
 			System.out.println("Missing Set Data");
 			reader.close();
