@@ -1,0 +1,1 @@
+"C:\Development\Graphics\RenderScene\temp\yoda\yodaobj.obj" "C:\Development\Graphics\RenderScene\temp\yodaScene.txt"

@@ -15,7 +15,7 @@ ido args:
 */
 public class Main {
 	private final static int GIF_FRAME_RATE = 300;
-	private final static double FRAME_RATE = 3;
+	private final static double FRAME_RATE = 2.5;
 	private final static boolean GIF = false;
 
 	public static void main(String[] args) {

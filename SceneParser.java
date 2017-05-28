@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class SceneParser {
 	final static boolean LOG = false;
+	final static String FRAME_SEPARATOR = "<FRAME_SPERATOR>";
 
 	/**
 	 * Parses the scene file and creates the scene. Change this function so it
