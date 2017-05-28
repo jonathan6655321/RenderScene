@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class convertOBJToParserableFormat {
 
 	public static void main(String[] args) throws IOException {
-		final int FRAME_NUMBER = 10;
+		final int FRAME_NUMBER = 30;
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(args[0]));
@@ -152,7 +152,7 @@ public class convertOBJToParserableFormat {
 							+ triangle[2][1] + " " + triangle[2][2] + " 1\n");
 				}
 
-				String setMaterialsLights = String.join("\n", "set 		1  	1  	1   	5 	10           3",
+				String setMaterialsLights = String.join("\n", "set 		1  	1  	1   	1 	10           1",
 						"mtl		0.07	0.97	0.07	1	1	1	0.5	0.5	0.5	30	0",
 						"lgt		0	3	0	0.5	0.5	0.3	1	0.9	1", "lgt		-3	3	-3	0.5	0.5	0.3	1	0.9	1",
 						"lgt		-3	3	3	0.5	0.5	0.3	1	0.9	1", "lgt		3	3	-3	0.5	0.5	0.3	1	0.9	1",
