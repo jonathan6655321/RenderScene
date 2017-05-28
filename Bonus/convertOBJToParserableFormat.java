@@ -7,11 +7,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-
-
 public class convertOBJToParserableFormat {
 
-	
 	public static void main(String[] args) throws IOException {
 		final int FRAME_NUMBER = 10;
 
@@ -106,111 +103,102 @@ public class convertOBJToParserableFormat {
 
 			double maxX, minX, maxY, minY, maxZ, minZ;
 			maxX = maxY = maxZ = Double.NEGATIVE_INFINITY;
-			minX= minY = minZ = Double.POSITIVE_INFINITY;
-			
-			
-			for (double[] point: vertices) {
-				if (maxX < point[0])
-				{
+			minX = minY = minZ = Double.POSITIVE_INFINITY;
+
+			for (double[] point : vertices) {
+				if (maxX < point[0]) {
 					maxX = point[0];
-				} 
-				if (minX > point[0])
-				{
+				}
+				if (minX > point[0]) {
 					minX = point[0];
 				}
-				if (maxY < point[1])
-				{
+				if (maxY < point[1]) {
 					maxY = point[1];
-				} 
-				if (minY > point[1])
-				{
+				}
+				if (minY > point[1]) {
 					minY = point[1];
 				}
-				if (maxZ < point[2])
-				{
+				if (maxZ < point[2]) {
 					maxZ = point[2];
-				} 
-				if (minZ > point[2])
-				{
+				}
+				if (minZ > point[2]) {
 					minZ = point[2];
 				}
 			}
-			
-			double[] lookAt = {(maxX + minX)/2, (maxY + minY)/2, (maxZ + minZ)/2};
-			double[] cameraPosition = {(maxX + minX)/2 + (maxX - minX), (maxY + minY)/2, (maxZ + minZ)/2};
-			
+
+			double[] lookAt = { (maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2 };
+			double[] cameraPosition = { (maxX + minX) / 2 + (maxX - minX), (maxY + minY) / 2, (maxZ + minZ) / 2 };
+
 			try {
 				StringBuilder scene = new StringBuilder();
-				double[] camera = {cameraPosition[0], cameraPosition[1], cameraPosition[2],
-						lookAt[0], lookAt[1], lookAt[2], 0.0, 0.0, 1.0, (maxX - minX)*0.25, lookAt[0]};
-				
-//				
-//				String camera = String.format("cam %f %f %f %f %f %f %f %f %f %f %f\n", 
-//						cameraPosition[0], cameraPosition[1], cameraPosition[2],
-//						lookAt[0], lookAt[1], lookAt[2], 0.0, 0.0, 1.0, (maxX - minX)*0.25, lookAt[0]);
-//				writer.format("cam %f %f %f %f %f %f %f %f %f %f %f\n", 
-//						cameraPosition[0], cameraPosition[1], cameraPosition[2],
-//						lookAt[0], lookAt[1], lookAt[2], 0.0, 0.0, 1.0, (maxX - minX)*0.25, lookAt[0]);
-								
+				double[] camera = { cameraPosition[0], cameraPosition[1], cameraPosition[2], lookAt[0], lookAt[1],
+						lookAt[2], 0.0, 0.0, 1.0, (maxX - minX) * 0.25, lookAt[0] };
+
+				//
+				// String camera = String.format("cam %f %f %f %f %f %f %f %f %f
+				// %f %f\n",
+				// cameraPosition[0], cameraPosition[1], cameraPosition[2],
+				// lookAt[0], lookAt[1], lookAt[2], 0.0, 0.0, 1.0, (maxX -
+				// minX)*0.25, lookAt[0]);
+				// writer.format("cam %f %f %f %f %f %f %f %f %f %f %f\n",
+				// cameraPosition[0], cameraPosition[1], cameraPosition[2],
+				// lookAt[0], lookAt[1], lookAt[2], 0.0, 0.0, 1.0, (maxX -
+				// minX)*0.25, lookAt[0]);
+
 				StringBuilder trianglesString = new StringBuilder();
 				for (double[][] triangle : triangles) {
 					trianglesString.append("trg " + triangle[0][0] + " " + triangle[0][1] + " " + triangle[0][2] + " "
 							+ triangle[1][0] + " " + triangle[1][1] + " " + triangle[1][2] + " " + triangle[2][0] + " "
 							+ triangle[2][1] + " " + triangle[2][2] + " 1\n");
 				}
-				
-				
-				String setMaterialsLights = String.join("\n", "set 		1  	1  	1   	5 	10           3"
-						, "mtl		0.07	0.97	0.07	1	1	1	0.5	0.5	0.5	30	0"
-						,"lgt		0	3	0	0.5	0.5	0.3	1	0.9	1"
-						,"lgt		-3	3	-3	0.5	0.5	0.3	1	0.9	1"
-						,"lgt		-3	3	3	0.5	0.5	0.3	1	0.9	1"
-						,"lgt		3	3	-3	0.5	0.5	0.3	1	0.9	1"
-						,"lgt		3	3	3	0.5	0.5	0.3	1	0.9	1\n");
-				
-				
+
+				String setMaterialsLights = String.join("\n", "set 		1  	1  	1   	5 	10           3",
+						"mtl		0.07	0.97	0.07	1	1	1	0.5	0.5	0.5	30	0",
+						"lgt		0	3	0	0.5	0.5	0.3	1	0.9	1", "lgt		-3	3	-3	0.5	0.5	0.3	1	0.9	1",
+						"lgt		-3	3	3	0.5	0.5	0.3	1	0.9	1", "lgt		3	3	-3	0.5	0.5	0.3	1	0.9	1",
+						"lgt		3	3	3	0.5	0.5	0.3	1	0.9	1\n");
+
 				String delimiter = "<FRAME_SPERATOR>\n";
-				
-				double radius = (maxX - minX);
-				
-				double startX = camera[0]; // with the radius
-				double startY = camera[1];
-				
-				
+
+				double radius = Math.max(maxX - minX, maxY - minY);
+				double endRadius = radius * 0.75;
+				double startX = lookAt[0]; // center of object
+				double startY = lookAt[1];
+
 				PrintWriter writer = new PrintWriter(args[1]);
-				
-				for (int i=0; i < FRAME_NUMBER; i++)
-				{
-					// change to radius 
-					double newX = startX - i*radius/FRAME_NUMBER;
-					double newY = startY + i*radius/FRAME_NUMBER;
-					
+
+				for (int i = 0; i < FRAME_NUMBER; i++) {
+					// change to radius
+					double currentRadius = radius + (endRadius - radius) * i / FRAME_NUMBER;
+					double cos = Math.cos(0.5 * Math.PI * (i + 1) / FRAME_NUMBER);
+					double sin = Math.sin(0.5 * Math.PI * (i + 1) / FRAME_NUMBER);
+					double newX = startX + currentRadius * cos;
+					double newY = startY + currentRadius * sin;
+
 					camera[0] = newX;
 					camera[1] = newY;
-					
-					int k =0;
-					String cameraString = String.format("cam %f %f %f %f %f %f %f %f %f %f %f\n", 
-					camera[k++], camera[k++],camera[k++],camera[k++],camera[k++],camera[k++],camera[k++],camera[k++],camera[k++],camera[k++],camera[k++]);
-					
-					
-					
+
+					int k = 0;
+					String cameraString = String.format("cam %f %f %f %f %f %f %f %f %f %f %f\n", camera[k++],
+							camera[k++], camera[k++], camera[k++], camera[k++], camera[k++], camera[k++], camera[k++],
+							camera[k++], camera[k++], camera[k++]);
+
 					writer.println(cameraString);
 					writer.println(setMaterialsLights);
 					writer.println(trianglesString);
-					if (i!=FRAME_NUMBER-1)
-					{
-						writer.println(delimiter);						
+					if (i != FRAME_NUMBER - 1) {
+						writer.println(delimiter);
 					}
-					
-//					scene.append(cameraString);
-//					scene.append(setMaterialsLights);
-//					scene.append(trianglesString);
-//					scene.append(delimiter);
-					
+
+					// scene.append(cameraString);
+					// scene.append(setMaterialsLights);
+					// scene.append(trianglesString);
+					// scene.append(delimiter);
+
 				}
-				
+
 				writer.print(scene);
-				
+
 				writer.close();
 			} catch (IOException e) {
 				// do something
