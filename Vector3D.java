@@ -118,7 +118,7 @@ public class Vector3D {
 	}
 
 	public static Vector3D addRowColToStartingPosition(Vector3D startPoint, Vector3D rowVector, Vector3D colVector,
-			int row, int col) {
+			double row, double col) {
 		Vector3D vrow = rowVector.getVectorMultipliedByConstant(row);
 		Vector3D vcol = colVector.getVectorMultipliedByConstant(col);
 

@@ -1,6 +1,7 @@
 package RenderScene;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class RayTracingUtil {
 
@@ -133,16 +134,20 @@ public class RayTracingUtil {
 		// make both vector have the needed magnitude for the radius
 		for (int i = 0; i < 2; i++)
 			vectors[i] = vectors[i]
-					.getVectorInSameDirectionWithMagnitude(2 * lightSource.getLightRadius() / rootNumberOfShadowRay);
+					.getVectorInSameDirectionWithMagnitude(lightSource.getLightRadius() / rootNumberOfShadowRay);
 
 		// for each source point check how much hit:
 		Vector3D lightSourcePoint;
 		double precent = 0;
+		Random rnd = new Random();
 		for (int row = -(rootNumberOfShadowRay / 2); row < rootNumberOfShadowRay - (rootNumberOfShadowRay / 2); row++) {
 			for (int col = -(rootNumberOfShadowRay / 2); col < rootNumberOfShadowRay
 					- (rootNumberOfShadowRay / 2); col++) {
+				double row1, col1;
+				row1 = row + rnd.nextDouble() - 0.5;
+				col1 = col + rnd.nextDouble() - 0.5;
 				lightSourcePoint = Vector3D.addRowColToStartingPosition(lightSource.getPosition(), vectors[0],
-						vectors[1], row, col);
+						vectors[1], row1, col1);
 				rayFromLightSourceToCollision = new Ray(lightSourcePoint,
 						Vector3D.subtract(collision.getCollisionPoint(), lightSourcePoint));
 				double precentOfFullyHitLight = getLightSourceHitCoefficence(scene, rayFromLightSourceToCollision,
