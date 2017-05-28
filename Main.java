@@ -3,6 +3,8 @@ package RenderScene;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import ch.randelshofer.media.quicktime.QuickTimeWriter;
+
 // jonathans args: 
 // C:\Development\Graphics\temp\Transparency.txt C:\Development\Graphics\temp\trans.png 500 500
 // C:\Development\Graphics\temp\yoda.txt C:\Development\Graphics\temp\yoda.png 500 500
@@ -12,7 +14,9 @@ ido args:
 "F:\Tau\Courses\Computer Science\2016-2017\Semester 2\Graphic\RenderScene\git\RenderScene\Scenes\Triangle.txt" "F:\Tau\Courses\Computer Science\2016-2017\Semester 2\Graphic\RenderScene\git\RenderScene\testImage.png" 500 500
 */
 public class Main {
-	private final static int FRAME_RATE = 300;
+	private final static int GIF_FRAME_RATE = 300;
+	private final static double FRAME_RATE = 3;
+	private final static boolean GIF = false;
 
 	public static void main(String[] args) {
 		try {
@@ -24,7 +28,6 @@ public class Main {
 						request.resultImageHeight);
 				ImageUtil.saveImage(resultImage, request.pathToResultImage);
 			} else {
-				
 				BufferedImage[] frames = new BufferedImage[scenes.length];
 				for (int frameNumber = 0; frameNumber < frames.length; frameNumber++) {
 					System.out.println("Rendering frame number " + frameNumber + ":");
@@ -35,7 +38,11 @@ public class Main {
 					convertedImg.getGraphics().drawImage(frames[frameNumber], 0, 0, null);
 					frames[frameNumber] = convertedImg;
 				}
-				ImageUtil.saveGifAnimation(frames, request.pathToResultImage, FRAME_RATE);
+				if (GIF) {
+					ImageUtil.saveGifAnimation(frames, request.pathToResultImage, GIF_FRAME_RATE);
+				} else {
+					VideoUtil.writeVideoOnlyVFR(request.pathToResultImage, frames, FRAME_RATE, QuickTimeWriter.VideoFormat.PNG);
+				}
 			}
 			System.out.println("Render scene completed successfully.");
 
