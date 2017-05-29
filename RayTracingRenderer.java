@@ -38,6 +38,7 @@ public class RayTracingRenderer implements IRenderer {
 
 	private static byte[] renderSceneToRGBByteArray(Scene scene, int resultImageWidth, int resultImageHeight) {
 		scene.getCamera().initScreenParams(resultImageHeight, resultImageWidth);
+		scene.setBinarySearchObjects();
 		byte[] imageRGBData = new byte[resultImageWidth * resultImageHeight * 3];
 		int rowsHandaledPerIteration = resultImageWidth / NUMBER_OF_CORES;
 		IntStream.rangeClosed(0, 1 + resultImageWidth / rowsHandaledPerIteration).parallel().forEach(row1 -> {

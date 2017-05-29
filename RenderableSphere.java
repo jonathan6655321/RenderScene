@@ -84,4 +84,19 @@ public class RenderableSphere extends RenderableObject{
 		}
 	}
 
+	@Override
+	public boolean isFinite() {
+		return true;
+	}
+
+	@Override
+	public double getMaxDistanceFromPoint(Vector3D point1) {
+		return Vector3D.getPointsDistance(point1, sphereCenterPosition) + sphereRadius;
+	}
+
+	@Override
+	public Vector3D getObjetCenter() {
+		return sphereCenterPosition.getVectorMultipliedByConstant(1);
+	}
+
 }

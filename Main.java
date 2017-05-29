@@ -15,7 +15,7 @@ ido args:
 */
 public class Main {
 	private final static int GIF_FRAME_RATE = 300;
-	private final static double FRAME_RATE = 2.5;
+	private final static double FRAME_RATE = 24;
 	private final static boolean GIF = false;
 
 	public static void main(String[] args) {
@@ -33,6 +33,7 @@ public class Main {
 					System.out.println("Rendering frame number " + frameNumber + ":");
 					frames[frameNumber] = renderer.renderScene(scenes[frameNumber], request.resultImageWidth,
 							request.resultImageHeight);
+					scenes[frameNumber] = null;
 					BufferedImage convertedImg = new BufferedImage(frames[frameNumber].getWidth(),
 							frames[frameNumber].getHeight(), BufferedImage.TYPE_INT_ARGB);
 					convertedImg.getGraphics().drawImage(frames[frameNumber], 0, 0, null);

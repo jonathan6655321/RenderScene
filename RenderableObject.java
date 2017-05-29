@@ -10,7 +10,12 @@ public abstract class RenderableObject {
 		this.material = material;
 	}
 	
+	public abstract boolean isFinite();
 	
+	public abstract double getMaxDistanceFromPoint(Vector3D point1);
+
+	
+	public abstract Vector3D getObjetCenter();
 	
 	public Material getMaterial() {
 		return material;

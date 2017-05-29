@@ -19,13 +19,13 @@ public class convertOBJToParserableFormat {
 		String objFile = "temp\\yoda\\yodaobj.obj";
 		String txtDst = "temp\\yodaScene.txt";
 		String movDst = "temp\\yodaScene.mov";
-		Integer width = 200;
-		Integer height = 200;
+		Integer width = 700;
+		Integer height = 700;
 		int superSampeling = 1;
-		int rootNumberOfShadowRay = 1;
-		int recursionDepth = 1;
-		int numberOfFrames = 5;
-		double shadowIntencity = 0.3;
+		int rootNumberOfShadowRay = 2;
+		int recursionDepth = 2;
+		int numberOfFrames = 10;
+		double shadowIntencity = 0.6;
 		
 		
 		args = new String[]{currentUserFolder + objFile ,

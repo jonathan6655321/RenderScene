@@ -40,4 +40,20 @@ public class RenderablePlane extends RenderableObject {
 		return new Collision(this, collisionPoint);
 	}
 
+	@Override
+	public boolean isFinite() {
+		return false;
+	}
+
+	@Override
+	public double getMaxDistanceFromPoint(Vector3D point1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Vector3D getObjetCenter() {
+		return null;
+	}
+
 }
