@@ -3,7 +3,10 @@ package RenderScene;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
+
+import sun.misc.Lock;
 
 public class RayTracingRenderer implements IRenderer {
 	private static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
@@ -40,30 +43,34 @@ public class RayTracingRenderer implements IRenderer {
 
 	private static byte[] renderSceneToRGBByteArray(Scene scene, int resultImageWidth, int resultImageHeight) {
 		initSceneForRendering(scene, resultImageWidth, resultImageHeight);
-		LinkedBlockingQueue<int[]> pixels = createPixelsQueue_forMultiProcessing(resultImageWidth,
-				resultImageHeight);
 		byte[] imageRGBData = new byte[resultImageWidth * resultImageHeight * 3];
-		
-		// make NUMBER_OF_CORES new threads.
-		// each polling pixel a time and rendering it.
-		IntStream.rangeClosed(1, NUMBER_OF_CORES).parallel().forEach(core -> {
-			int[] pixel;
-			int row, col;
-			double row1, col1;
-			Random rnd = new Random();
-			while (true) {
-				pixel = pixels.poll();
-				if (pixel == null) {// finished!
-					break;
-				}
-				row = pixel[1];
-				col = pixel[0];
-				row1 = row - 0.5 + rnd.nextDouble();
-				col1 = col - 0.5 + rnd.nextDouble();
+		Random rnd = new Random();
 
-				Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(row1, col1);
+		int[] currentPixel = new int[] { 0, 0 };//row,col
+
+		// make NUMBER_OF_CORES new threads.
+		IntStream.rangeClosed(1, NUMBER_OF_CORES).parallel().forEach(core -> {
+			int rowInt, colInt;
+			double rowDouble, colDouble;
+			while (true) {
+				synchronized (rnd) {//loop logic for multithread :)
+					if (currentPixel[1] >= resultImageWidth) {
+						currentPixel[1] = 0;
+						currentPixel[0]++;
+					}
+					if (currentPixel[0] >= resultImageHeight) {
+						break;
+					}
+					rowInt = currentPixel[0];
+					colInt = currentPixel[1];
+					rowDouble = rowInt - 0.5 + rnd.nextDouble();
+					colDouble = colInt - 0.5 + rnd.nextDouble();
+					currentPixel[1]++;
+				}
+
+				Ray firstRay = scene.getCamera().getRayWhichLeavesFromPixel(rowDouble, colDouble);
 				byte[] color = RayTracingUtil.getColorFromRay(scene, firstRay, 0, null).getColorByteArray();
-				System.arraycopy(color, 0, imageRGBData, ((row * resultImageWidth) + col) * 3, 3);
+				System.arraycopy(color, 0, imageRGBData, ((rowInt * resultImageWidth) + colInt) * 3, 3);
 			}
 		});
 		return imageRGBData;
@@ -72,16 +79,5 @@ public class RayTracingRenderer implements IRenderer {
 	private static void initSceneForRendering(Scene scene, int resultImageWidth, int resultImageHeight) {
 		scene.getCamera().initScreenParams(resultImageHeight, resultImageWidth);
 		scene.setBinarySearchObjects();
-	}
-
-	private static LinkedBlockingQueue<int[]> createPixelsQueue_forMultiProcessing(int resultImageWidth,
-			int resultImageHeight) {
-		LinkedBlockingQueue<int[]> pixels = new LinkedBlockingQueue<>();
-		for (int i = 0; i < resultImageWidth; i++) {
-			for (int j = 0; j < resultImageHeight; j++) {
-				pixels.add(new int[] { i, j });
-			}
-		}
-		return pixels;
 	}
 }

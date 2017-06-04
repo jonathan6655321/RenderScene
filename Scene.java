@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Scene {
-	private static boolean USE_BINARY_TREE = false;
+	private static boolean USE_BINARY_TREE = true;
 
 	private List<RenderableObject> objectsInScene = new LinkedList<>();
 	private RenderableBinarySearchObject binarySearchObjects = new RenderableBinarySearchObject();
@@ -35,7 +35,11 @@ public class Scene {
 	}
 
 	public void addRenderableObject(RenderableObject renderableObject) {
-		if (USE_BINARY_TREE && !binarySearchObjects.addRenderableObject(renderableObject)) {
+		if(USE_BINARY_TREE){
+			if (!binarySearchObjects.addRenderableObject(renderableObject)) {
+				objectsInScene.add(renderableObject);
+			}
+		}else{
 			objectsInScene.add(renderableObject);
 		}
 	}

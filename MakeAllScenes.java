@@ -6,7 +6,7 @@ public class MakeAllScenes {
 	private final static String defultFolder = IDO_FOLDER;
 	private final static String sceneFolder = "Scenes\\";
 	private final static String[] filesToRender = { "Transparency", "Pool", "Room1", "Room10", "Spheres", "Triangle",
-			"Triangle2" };
+	"Triangle2" };
 	private final static String fileType = ".txt";
 	private final static String destFolder = "MyScenes\\";
 	private final static String destFileType = ".png";
