@@ -10,15 +10,24 @@ import java.util.ArrayList;
 
 
 public class convertOBJToParserableFormat {
-	public static String IDO_FOLDER = "F:\\Tau\\Courses\\Computer Science\\2016-2017\\Semester 2\\Graphic\\RenderScene\\git\\RenderScene\\";
-	public static String JOHNATHAN_FOLDER = "C:\\Development\\Graphics\\RenderScene\\";
+//	public static String IDO_FOLDER = "F:\\Tau\\Courses\\Computer Science\\2016-2017\\Semester 2\\Graphic\\RenderScene\\git\\RenderScene\\";
+//	public static String JOHNATHAN_FOLDER = "C:\\Development\\Graphics\\RenderScene\\";
 	public static void main(String[] args) throws IOException {
 		
-		String currentUserFolder = IDO_FOLDER;
 		
-		String objFile = "temp\\yoda\\yodaobj.obj";
-		String txtDst = "temp\\yodaScene.txt";
-		String movDst = "temp\\yodaScene.mov";
+//		String currentUserFolder = IDO_FOLDER;
+//		String objFile = "temp\\yoda\\yodaobj.obj";
+//		String txtDst = "temp\\yodaScene.txt";
+//		String movDst = "temp\\yodaScene.mov";
+
+		String currentUserFolder = args[0];
+		String objFile = args[1];
+		String txtDst = args[2];
+		String movDst = args[3];
+		
+		
+		
+		
 		Integer width = 200;
 		Integer height = 200;
 		int superSampeling = 1;
