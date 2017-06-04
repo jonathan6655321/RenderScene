@@ -74,11 +74,11 @@ public class Vector3D {
 
 	// changes the vector!!
 	public void normalize() {
-		this.multiplyByConstant(1 / this.getMagnitude());
+		this.multiplyByConstant(((double) 1) / this.getMagnitude());
 	}
 
 	public Vector3D getNormalizedVector() {
-		return this.getVectorMultipliedByConstant(1 / this.getMagnitude());
+		return this.getVectorMultipliedByConstant(((double) 1) / this.getMagnitude());
 	}
 
 	public Vector3D getVectorInSameDirectionWithMagnitude(double mag) {

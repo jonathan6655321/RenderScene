@@ -33,7 +33,6 @@ public class Camera {
 		initTopLeftPixelPosition(imageHeightInPixels, imageWidthInPixels);
 	}
 	
-	// TODO image height, width is number of pixels 
 	public Ray getRayWhichLeavesFromPixel(double row, double col)
 	{
 		Vector3D pixelAtRowColPosition = getPositionOfPixelAtRowCol(row, col);
@@ -85,18 +84,5 @@ public class Camera {
 		Vector3D firstCrossProd = Vector3D.crossProduct(lookAtDirection, upDirection);
 		Vector3D secondCrossProd = Vector3D.crossProduct(lookAtDirection, firstCrossProd);
 		return secondCrossProd.getVectorMultipliedByConstant(-1);
-		/*
-		
-		//TODO big haltura here..
-		for (int i=0; i < 3; i++)
-		{
-			if(lookAtDirection.vector[i] != 0)
-			{
-				upDirection.vector[i] = -(lookAtDirection.vector[(i+1)%3]*upDirection.vector[(i+1)%3] + 
-						lookAtDirection.vector[(i+2)%3]*upDirection.vector[(i+2)%3])/lookAtDirection.vector[i];
-				return upDirection;
-			}
-		}
-		return upDirection;*/
 	}
 }

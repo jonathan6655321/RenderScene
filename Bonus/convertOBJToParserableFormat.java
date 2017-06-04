@@ -36,6 +36,16 @@ public class convertOBJToParserableFormat {
 		int numberOfFrames = 5;
 		double shadowIntencity = 0.3;
 		
+		System.out.format("objFile:		%s\n", objFile);
+		System.out.format("txtDst:			%s\n", txtDst);
+		System.out.format("movDst:			%s\n", movDst);
+		System.out.format("width:			%d\n", width);
+		System.out.format("height:			%d\n", height);
+		System.out.format("superSampeling:		%d\n", superSampeling);
+		System.out.format("rootNumberOfShadowRay:	%d\n", rootNumberOfShadowRay);
+		System.out.format("recursionDepth:		%d\n", recursionDepth);
+		System.out.format("numberOfFrames:		%d\n", numberOfFrames);
+		System.out.format("shadowIntencity:	%f\n", shadowIntencity);
 		
 		args = new String[]{currentUserFolder + objFile ,
 				currentUserFolder + txtDst ,
