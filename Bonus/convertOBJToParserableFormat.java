@@ -7,26 +7,35 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+
+
 public class convertOBJToParserableFormat {
-	public static String IDO_FOLDER = "F:\\Tau\\Courses\\Computer Science\\2016-2017\\Semester 2\\Graphic\\RenderScene\\git\\RenderScene\\";
-	public static String JOHNATHAN_FOLDER = "C:\\Development\\Graphics\\RenderScene\\";
-
+//	public static String IDO_FOLDER = "F:\\Tau\\Courses\\Computer Science\\2016-2017\\Semester 2\\Graphic\\RenderScene\\git\\RenderScene\\";
+//	public static String JOHNATHAN_FOLDER = "C:\\Development\\Graphics\\RenderScene\\";
 	public static void main(String[] args) throws IOException {
+		
+		
+//		String currentUserFolder = IDO_FOLDER;
+//		String objFile = "temp\\yoda\\yodaobj.obj";
+//		String txtDst = "temp\\yodaScene.txt";
+//		String movDst = "temp\\yodaScene.mov";
 
-		String currentUserFolder = IDO_FOLDER;
-
-		String objFile = "temp\\yoda\\yodaobj.obj";
-		// objFile = "temp\\Z3_OBJ.obj";
-		String txtDst = "temp\\yodaScene.txt";
-		String movDst = "temp\\yodaScene6.mov";
-		//movDst = "temp\\yodaScene2.png";
-		Integer width = 800;
-		Integer height = 800;
-		int superSampeling = 2;
-		int rootNumberOfShadowRay = 2;
-		int recursionDepth = 2;
-		int numberOfFrames = 300;
-		double shadowIntencity = 0.6;
+		String currentUserFolder = args[0];
+		String objFile = args[1];
+		String txtDst = args[2];
+		String movDst = args[3];
+		
+		
+		
+		
+		Integer width = 200;
+		Integer height = 200;
+		int superSampeling = 1;
+		int rootNumberOfShadowRay = 1;
+		int recursionDepth = 1;
+		int numberOfFrames = 5;
+		double shadowIntencity = 0.3;
+		
 		System.out.format("objFile:		%s\n", objFile);
 		System.out.format("txtDst:			%s\n", txtDst);
 		System.out.format("movDst:			%s\n", movDst);
@@ -37,9 +46,12 @@ public class convertOBJToParserableFormat {
 		System.out.format("recursionDepth:		%d\n", recursionDepth);
 		System.out.format("numberOfFrames:		%d\n", numberOfFrames);
 		System.out.format("shadowIntencity:	%f\n", shadowIntencity);
-
-		args = new String[] { currentUserFolder + objFile, currentUserFolder + txtDst, currentUserFolder + movDst,
-				width.toString(), height.toString() };
+		
+		args = new String[]{currentUserFolder + objFile ,
+				currentUserFolder + txtDst ,
+				currentUserFolder + movDst , 
+				width.toString(),
+				height.toString()};
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(args[0]));
@@ -156,10 +168,12 @@ public class convertOBJToParserableFormat {
 			}
 
 			double[] lookAt = { (maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2 };
-			double cameraPositionZ = (maxZ + minZ) / 2;
+			double[] cameraPosition = { (maxX + minX) / 2 + (maxX - minX), (maxY + minY) / 2, (maxZ + minZ) / 2 };
 
 			try {
 				StringBuilder scene = new StringBuilder();
+				double[] camera = { cameraPosition[0], cameraPosition[1], cameraPosition[2], lookAt[0], lookAt[1],
+						lookAt[2], 0.0, 0.0, 1.0, (maxX - minX) * 0.25, lookAt[0] };
 
 				//
 				// String camera = String.format("cam %f %f %f %f %f %f %f %f %f
@@ -179,29 +193,18 @@ public class convertOBJToParserableFormat {
 							+ triangle[2][1] + " " + triangle[2][2] + " 1\n");
 				}
 
-				double radiusConstant = 1.6;
-				double screenDistanceConstant = 1.1;
-				double radius = Math.max(maxX - minX, maxY - minY) * 0.5;
-				double screenWidth = Math.max(Math.max(maxX - minX, maxY - minY), maxZ - minZ);
-				double screenDistance = radius * radiusConstant - radius * screenDistanceConstant;
-				double planeDistance = radius * radiusConstant * 1.2;
-				double lightDistance = radius * radiusConstant * 1;
-				String setMaterialsLights = String.join("\n",
-						"set 1 1 1 " + rootNumberOfShadowRay + " " + recursionDepth + " " + superSampeling,
+				double radius = Math.max(maxX - minX, maxY - minY);
+				double planeDistance = radius * 1.2;
+				double lightDistance = radius * 1;
+				String setMaterialsLights = String.join("\n", "set 1 1 1 "+rootNumberOfShadowRay+" " + recursionDepth + " " + superSampeling,
 						"mtl		0.07	0.97	0.07	0.2 0.2 0.2	0 0 0	30	0",
 						"mtl		0.1 0.1 0.1 0 0 0	1 1 1	30	0",
-						"lgt		0	0	" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	" + shadowIntencity
-								+ "	1",
-						"lgt		0		" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	" + shadowIntencity
-								+ "	1",
-						"lgt				" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	" + shadowIntencity
-								+ "	1",
-						"lgt		0	0	-" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	" + shadowIntencity
-								+ "	1",
-						"lgt		0		-" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	" + shadowIntencity
-								+ "	1",
-						"lgt				-" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	"
-								+ shadowIntencity + "	1",
+						"lgt		0	0	" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt		0		" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt				" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt		0	0	-" + (lookAt[2] + planeDistance) + "	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt		0		-" + (lookAt[1] + planeDistance) + " 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
+						"lgt				-" + (lookAt[0] + planeDistance) + " 0 0	0.5	0.5	0.3	1	" +shadowIntencity +"	1",
 						"pln		0	1	0	" + (lookAt[1] + lightDistance) + "	2",
 						"pln		0	-1	0	" + (lookAt[1] + planeDistance) + "	2",
 						"pln		1	0	0	" + (lookAt[0] + planeDistance) + "	2",
@@ -211,22 +214,23 @@ public class convertOBJToParserableFormat {
 
 				String delimiter = "<FRAME_SPERATOR>\n";
 
+				double endRadius = radius * 0.75;
 				double startX = lookAt[0]; // center of object
 				double startY = lookAt[1];
 
 				PrintWriter writer = new PrintWriter(args[1]);
 
-				double[] camera = { 0, 0, cameraPositionZ, lookAt[0], lookAt[1], lookAt[2], 0.0, 0.0, 1.0,
-						screenDistance, screenWidth };
 				for (int i = 0; i < numberOfFrames; i++) {
 					// change to radius
+					double currentRadius = radius + (endRadius - radius) * i / numberOfFrames;
 					double cos = Math.cos(2 * Math.PI * (i + 1) / numberOfFrames);
 					double sin = Math.sin(2 * Math.PI * (i + 1) / numberOfFrames);
-					double newX = startX + radius * radiusConstant * cos;
-					double newY = startY + radius * radiusConstant * sin;
+					double newX = startX + currentRadius * cos;
+					double newY = startY + currentRadius * sin;
 
 					camera[0] = newX;
 					camera[1] = newY;
+
 					int k = 0;
 					String cameraString = String.format("cam %f %f %f %f %f %f %f %f %f %f %f\n", camera[k++],
 							camera[k++], camera[k++], camera[k++], camera[k++], camera[k++], camera[k++], camera[k++],
@@ -249,7 +253,6 @@ public class convertOBJToParserableFormat {
 				writer.print(scene);
 
 				writer.close();
-				System.out.format("\"%s\" \"%s\" %s %s\n", args[1], args[2], args[3], args[4]);
 				RenderScene.Main.main(new String[] { args[1], args[2], args[3], args[4] });
 			} catch (IOException e) {
 				// do something
