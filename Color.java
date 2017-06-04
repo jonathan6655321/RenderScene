@@ -23,14 +23,6 @@ public class Color {
 		return;
 	}
 
-	public void multiplyByConstant(double c) {
-		this.red *= c;
-		this.blue *= c;
-		this.green *= c;
-		this.boundComponentsToOne();
-		return;
-	}
-
 	public Color getColorMultiplyByConstant(double constant) {
 		return new Color(this.red * constant, this.green * constant, this.blue * constant);
 	}

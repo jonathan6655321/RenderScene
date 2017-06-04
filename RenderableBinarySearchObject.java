@@ -1,117 +1,129 @@
 package RenderScene;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 public class RenderableBinarySearchObject {
-	public static int SPLIT_INTO = 5;
-	private ArrayList<RenderableObject> renderableObjects = new ArrayList<>();
-	private ArrayList<RenderableBinarySearchObject> renderableBinarySearchObject = new ArrayList<>();
-	private double radius = 0;
-	private Vector3D location = null;
+	private final static int SPLIT_INTO = 3;
+	private final static Random rnd = new Random();
 
-	private boolean isSet = true;
+	private List<RenderableObject> renderableObjects = new LinkedList<>();
+	private List<RenderableBinarySearchObject> renderableBinarySearchObject = new LinkedList<>();
+
+	private RenderableSphere sphere = null;
 
 	public boolean addRenderableObject(RenderableObject rObject) {
 		if (rObject.isFinite() == false) {
 			return false;
 		}
 		renderableObjects.add(rObject);
-		isSet = false;
 		return true;
 	}
 
+	public boolean isEmpty() {
+		return renderableObjects.isEmpty() && renderableBinarySearchObject.isEmpty();
+	}
+
 	public void manageBinarySearch() {
-		if (isSet) {
+		setSphere();
+		if (renderableBinarySearchObject.size() + renderableObjects.size() < SPLIT_INTO * 2) {
 			return;
 		}
-		isSet = true;
-		if (location == null) {
-			location = new Vector3D(0, 0, 0);
-			for (RenderableObject r : renderableObjects) {
-				location = Vector3D.add(location, r.getObjetCenter());
+
+		Vector3D[] locations = generateRandomLocations();
+
+		double minDistance;
+		int minIndex;
+		for (RenderableObject rObj : renderableObjects) {
+			minDistance = Double.MAX_VALUE;
+			minIndex = 0;
+			for (int i = 0; i < SPLIT_INTO; i++) {
+				double currentDistance = Vector3D.getPointsDistance(rObj.getObjetCenter(), locations[i]);
+				if (currentDistance < minDistance) {
+					minDistance = currentDistance;
+					minIndex = i;
+				}
 			}
-			location = location.getVectorMultipliedByConstant(((double) (1)) / ((double) (renderableObjects.size())));
+			renderableBinarySearchObject.get(minIndex).addRenderableObject(rObj);
 		}
+		renderableObjects.clear();
+
+		removeEmptyrendeRableBinarySearchObject();
+		if (renderableBinarySearchObject.size() != 1) {
+			for (RenderableBinarySearchObject r : renderableBinarySearchObject) {
+				r.manageBinarySearch();
+			}
+		}else{
+			renderableObjects = renderableBinarySearchObject.get(0).renderableObjects;
+			renderableBinarySearchObject.clear();
+		}
+	}
+
+	public void addCollisions(Ray ray, double minCollisionDistance, List<Collision> collisions,
+			RenderableObject objectToIgnore) {
+		if (isEmpty()) {
+			return;
+		}
+		Collision collision = sphere.getCollision(ray);
+		if (collision == null || Vector3D.getPointsDistance(collision.getCollisionPoint(),
+				ray.startPosition) > minCollisionDistance) {
+			if (Vector3D.getPointsDistance(sphere.getObjetCenter(), ray.startPosition) > sphere.getRadius()) {
+				return;
+			}
+		}
+
+		for (RenderableObject rObj : renderableObjects) {
+			if (rObj != objectToIgnore) {
+				collision = rObj.getCollision(ray);
+				if (collision != null && Vector3D.getPointsDistance(collision.getCollisionPoint(),
+						ray.startPosition) < minCollisionDistance) {
+					collisions.add(collision);
+				}
+			}
+		}
+
+		for (RenderableBinarySearchObject r : renderableBinarySearchObject) {
+			r.addCollisions(ray, minCollisionDistance, collisions, objectToIgnore);
+		}
+		return;
+
+	}
+
+	private void setSphere() {
+		double radius = 0;
+		Vector3D location = new Vector3D(0, 0, 0);
+
+		for (RenderableObject r : renderableObjects) {
+			location = Vector3D.add(location, r.getObjetCenter());
+		}
+		location = location.getVectorMultipliedByConstant(((double) (1)) / ((double) (renderableObjects.size())));
 
 		for (RenderableObject r : renderableObjects) {
 			radius = Math.max(radius, r.getMaxDistanceFromPoint(location));
 		}
+		sphere = new RenderableSphere(location, radius, null);
+	}
 
-		if (renderableBinarySearchObject.size() + renderableObjects.size() < SPLIT_INTO * SPLIT_INTO) {
-			return;
+	private Vector3D[] generateRandomLocations() {
+		Vector3D[] locations = new Vector3D[SPLIT_INTO];
+
+		for (int i = 0; i < SPLIT_INTO; i++) {
+			renderableBinarySearchObject.add(new RenderableBinarySearchObject());
+			locations[i] = renderableObjects.get(rnd.nextInt(renderableObjects.size())).getObjetCenter();
 		}
 
-		if (renderableBinarySearchObject.size() == SPLIT_INTO) {
+		return locations;
+	}
 
-			int i = 0;
-			for (RenderableObject r : renderableObjects) {
-				renderableBinarySearchObject.get(i % SPLIT_INTO).addRenderableObject(r);
-			}
-			renderableObjects.clear();
-		} else {
-
-			while (renderableBinarySearchObject.size() < SPLIT_INTO) {
-				renderableBinarySearchObject.add(new RenderableBinarySearchObject());
-			}
-
-			int itemInGroup = renderableObjects.size() / SPLIT_INTO;
-			for (int i = 0; i < SPLIT_INTO; i++) {
-				for (int j = 0; j <= itemInGroup; j++) {
-					if (renderableObjects.isEmpty()) {
-						break;
-					} else {
-						renderableBinarySearchObject.get(i).addRenderableObject(renderableObjects.remove(0));
-					}
-				}
-			}
-			for (RenderableBinarySearchObject r : renderableBinarySearchObject) {
-				r.manageBinarySearch();
+	private void removeEmptyrendeRableBinarySearchObject() {
+		int i = 0;
+		while (i < renderableBinarySearchObject.size()) {
+			if (renderableBinarySearchObject.get(i).isEmpty()) {
+				renderableBinarySearchObject.remove(i);
+			} else {
+				i++;
 			}
 		}
 	}
-
-	public ArrayList<Collision> getCollision(Ray ray) {
-		// faster!
-		if (renderableObjects.isEmpty() && renderableBinarySearchObject.isEmpty()) {
-			return null;
-		}
-		manageBinarySearch();
-		if (location == null) {
-			int i = 0;
-		}
-		double[] p1 = ray.startPosition.vector, p2 = ray.direction.vector;
-		double[] tv = location.vector;
-		double x = tv[0] - p1[0];
-		double y = tv[1] - p1[1];
-		double z = tv[2] - p1[2];
-		double dotproduct = (x * p2[0] + y * p2[1] + z * p2[2]) / (p2[0] * p2[0] + p2[1] * p2[1] + p2[2] * p2[2]);
-		x -= p2[0] * dotproduct;
-		y -= p2[1] * dotproduct;
-		z -= p2[2] * dotproduct;
-		dotproduct = x * x + y * y + z * z;
-		if (dotproduct > radius * radius) {
-			return null;
-		}
-
-		ArrayList<Collision> collisions = new ArrayList<>();
-
-		Collision collision;
-		for (RenderableObject r : renderableObjects) {
-			collision = r.getCollision(ray);
-			if (collision != null) {
-				collisions.add(collision);
-			}
-		}
-
-		ArrayList<Collision> collisionArr;
-		for (RenderableBinarySearchObject r : renderableBinarySearchObject) {
-			collisionArr = r.getCollision(ray);
-			if (collisionArr != null) {
-				collisions.addAll(collisionArr);
-			}
-		}
-		return collisions;
-
-	}
-
 }

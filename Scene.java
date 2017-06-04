@@ -1,12 +1,14 @@
 package RenderScene;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Scene {
+	private static boolean USE_BINARY_TREE = false;
 
-	private ArrayList<RenderableObject> objectsInScene = new ArrayList<>();
+	private List<RenderableObject> objectsInScene = new LinkedList<>();
 	private RenderableBinarySearchObject binarySearchObjects = new RenderableBinarySearchObject();
-	private ArrayList<LightSource> lightSourcesInScene = new ArrayList<>();
+	private List<LightSource> lightSourcesInScene = new LinkedList<>();
 	private Camera camera;
 	private Color backgroundColor;
 	private int rootNumberOfShadowRay;
@@ -28,12 +30,12 @@ public class Scene {
 		lightSourcesInScene.add(lightSource);
 	}
 
-	public ArrayList<LightSource> getLightSources() {
+	public List<LightSource> getLightSources() {
 		return lightSourcesInScene;
 	}
 
 	public void addRenderableObject(RenderableObject renderableObject) {
-		if (!binarySearchObjects.addRenderableObject(renderableObject)) {
+		if (USE_BINARY_TREE && !binarySearchObjects.addRenderableObject(renderableObject)) {
 			objectsInScene.add(renderableObject);
 		}
 	}
@@ -61,56 +63,42 @@ public class Scene {
 	public Collision getFirstCollisionWithRay(Ray ray, RenderableObject objectToIgnore) {
 		Collision minCollision = null;
 		double minCollisionDistance = Double.POSITIVE_INFINITY;
-		ArrayList<Collision> collisions = getAllCollision(ray);
+		List<Collision> collisions = getAllCollision(ray, Double.MAX_VALUE, objectToIgnore);
 
 		for (Collision collision : collisions) {
-			if (objectToIgnore != collision.getCollisionObject()) {
-				double collitionDistance = Vector3D.getPointsDistance(collision.getCollisionPoint(), ray.startPosition);
-				if (collitionDistance < minCollisionDistance) {
-					minCollisionDistance = collitionDistance;
-					minCollision = collision;
-				}
+			double collitionDistance = Vector3D.getPointsDistance(collision.getCollisionPoint(), ray.startPosition);
+			if (collitionDistance < minCollisionDistance) {
+				minCollisionDistance = collitionDistance;
+				minCollision = collision;
 			}
 		}
 
 		return minCollision;
 	}
 
-	public ArrayList<Collision> getAllCollision(Ray ray, double minCollisionDistance, RenderableObject objectToIgnore) {
-		ArrayList<Collision> collisions = getAllCollision(ray);
-
-		int i = 0;
-		while (i < collisions.size()) {
-			if (collisions.get(i).getCollisionObject() == objectToIgnore) {
-				collisions.remove(i);
-				continue;
-			}
-			if (Vector3D.getPointsDistance(collisions.get(i).getCollisionPoint(),
-					ray.startPosition) < minCollisionDistance) {
-				collisions.remove(i);
-				continue;
-			}
-			i++;
-		}
-		return collisions;
-	}
-
-	public ArrayList<Collision> getAllCollision(Ray ray) {
-		ArrayList<Collision> collisions = new ArrayList<>();
+	public List<Collision> getAllCollision(Ray ray, double minCollisionDistance, RenderableObject objectToIgnore) {
+		List<Collision> collisions = new LinkedList<>();
 		for (RenderableObject rObj : objectsInScene) {
-			Collision collision = rObj.getCollision(ray);
-			if (collision != null) {
-				collisions.add(collision);
+			if (rObj != objectToIgnore) {
+				Collision collision = rObj.getCollision(ray);
+				if (collision != null && Vector3D.getPointsDistance(collision.getCollisionPoint(),
+						ray.startPosition) < minCollisionDistance) {
+					collisions.add(collision);
+				}
 			}
 		}
-		ArrayList<Collision> collisionsArr = binarySearchObjects.getCollision(ray);
-		if (collisionsArr != null) {
-			collisions.addAll(collisionsArr);
-		}
+		if (USE_BINARY_TREE)
+			binarySearchObjects.addCollisions(ray, minCollisionDistance, collisions, objectToIgnore);
+
 		return collisions;
 	}
 
-	public void setBinarySearchObjects(){
-		binarySearchObjects.manageBinarySearch();
+	public List<Collision> getAllCollision(Ray ray) {
+		return getAllCollision(ray, Double.MAX_VALUE, null);
+	}
+
+	public void setBinarySearchObjects() {
+		if (USE_BINARY_TREE)
+			binarySearchObjects.manageBinarySearch();
 	}
 }
